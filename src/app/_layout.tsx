@@ -26,10 +26,7 @@ function AuthGuard() {
   }, [isLoading]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <Stack screenOptions={{ headerShown: false }} />
   );
 }
 
