@@ -12,14 +12,13 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   async function handlerRegister() {
     try {
       await UserService.register({ email, username, password });
       router.replace("/(auth)/login");
     } catch (error: any) {
-      setError(error.response?.data || "Erro ao criar conta.");
+      console.log("Erro: ", error);
     }
   }
 
@@ -31,7 +30,6 @@ export default function Register() {
         <Input placeholder="Email" value={email} onChangeText={setEmail} />
         <Input placeholder="Senha" value={password} onChangeText={setPassword} secureTextEntry />
 
-        {error && <Text style={styles.error}>{error}</Text>}
         <StyledButton title="Cadastrar" onPress={handlerRegister}></StyledButton>
 
         <View style={styles.textContainer}>

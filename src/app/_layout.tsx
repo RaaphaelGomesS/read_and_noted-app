@@ -26,7 +26,7 @@ function AuthGuard() {
   }, [isLoading]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }} />
+    <Stack screenOptions={{ headerShown: false}} />
   );
 }
 
