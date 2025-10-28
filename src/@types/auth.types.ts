@@ -16,3 +16,14 @@ export type UserResponseDTO = {
   email: string;
   username: string;
 };
+
+export type BookStatus = 'lendo' | 'aguardando' | 'finalizado' | 'parado';
+
+export type Book = {
+  id: number;
+  title: string;
+  author: string;
+  img: string;
+  readPages: number;
+  totalPages: number;
+};
