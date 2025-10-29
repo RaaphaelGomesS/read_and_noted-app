@@ -4,18 +4,15 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 export default function TabLayout() {
-  const activeColor = Colors.accent;
-  const inactiveColor = Colors.textSecondary;
-  const bgColor = Colors.background;
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: activeColor,
-        tabBarInactiveTintColor: inactiveColor,
+        tabBarActiveTintColor: Colors.accent,
+        tabBarInactiveTintColor: Colors.textSecondary,
         tabBarStyle: {
-          backgroundColor: bgColor,
+          backgroundColor: Colors.surface,
           borderTopWidth: 0,
         }
       }}>

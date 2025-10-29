@@ -27,3 +27,9 @@ export type Book = {
   readPages: number;
   totalPages: number;
 };
+
+export type Library = {
+  id: number;
+  name: string;
+  description?: string;
+};

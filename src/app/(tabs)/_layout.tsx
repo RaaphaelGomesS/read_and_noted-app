@@ -36,12 +36,12 @@ export default function AppLayout() {
     <Drawer drawerContent={(props: any) => <CustomDrawerContent {...props} />}
     screenOptions={{
         headerStyle: {
-          backgroundColor: Colors.background,
+          backgroundColor: Colors.surface,
         },
         headerTintColor: Colors.text,
         headerTitleAlign: 'center',
         drawerStyle: {
-          backgroundColor: Colors.background,
+          backgroundColor: Colors.surface,
           width: 240,  
         },
         drawerActiveTintColor: Colors.accent,
@@ -49,6 +49,14 @@ export default function AppLayout() {
         drawerActiveBackgroundColor: 'rgba(157, 90, 239, 0.1)',
       }}
     >
+
+      <Drawer.Screen
+        name="index"
+        options={{
+          drawerItemStyle: { display: 'none' }
+        }}
+      />
+
       <Drawer.Screen
         name="library"
         options={{

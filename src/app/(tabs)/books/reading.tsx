@@ -1,6 +1,7 @@
 import { Book } from '@/@types/auth.types';
 import BookCard from '@/components/bookCard';
 import EditPagesModal from '@/components/editPagesModal';
+import { Colors } from '@/constants/Colors';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
@@ -99,7 +100,8 @@ export default function LendoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1C1C1E',
+    paddingTop: 15,
+    backgroundColor: Colors.background,
   },
   emptyText: {
     color: '#999',

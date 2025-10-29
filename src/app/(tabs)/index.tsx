@@ -1,25 +1,5 @@
-import { Link } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Redirect } from 'expo-router';
 
 export default function Index() {
-    return(
-        <View style={styles.container}>
-            <Text style={styles.title}>Tela base</Text>
-            <Link href={"/(tabs)/books/reading"}>reading</Link>
-        </View>
-    )
+    return <Redirect href="/library" />;
 }
-
-const styles = StyleSheet.create({
-
-    container: {
-        flex: 1,
-        justifyContent: "center"
-    },
-
-    title: {
-        fontSize: 30,
-        alignSelf: "center",
-        fontWeight: "bold"
-    }
-});
