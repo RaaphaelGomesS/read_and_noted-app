@@ -2,7 +2,7 @@ import * as Storage from "@/service/Storage";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  baseURL: "http://192.168.2.104:8080",
 });
 
 api.interceptors.request.use(
