@@ -65,7 +65,7 @@ export default function LendoScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: 'Sua Biblioteca' }} />
+      <Stack.Screen />
       <FlatList
         data={books}
         keyExtractor={(item) => item.id.toString()}

@@ -2,7 +2,7 @@ import * as Storage from "@/service/Storage";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://192.168.2.104:8080",
+  baseURL: "http://192.168.2.100:8080",
 });
 
 api.interceptors.request.use(

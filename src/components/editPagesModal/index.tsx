@@ -1,13 +1,14 @@
+import { Colors } from '@/constants/Colors';
 import React, { useEffect, useState } from 'react';
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 type EditPagesModalProps = {
@@ -30,7 +31,6 @@ const EditPagesModal = ({
   const [pages, setPages] = useState(String(currentPages));
 
   useEffect(() => {
-    // Atualiza o estado interno se o livro selecionado mudar
     setPages(String(currentPages));
   }, [currentPages]);
 
@@ -39,7 +39,6 @@ const EditPagesModal = ({
     if (!isNaN(numPages) && numPages <= totalPages && numPages >= 0) {
       onSubmit(numPages);
     } else {
-      // Opcional: Adicionar alerta de erro
       console.warn('Número de páginas inválido');
     }
   };
@@ -145,10 +144,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   cancelButton: {
-    backgroundColor: '#777',
+    backgroundColor: Colors.textSecondary,
   },
   saveButton: {
-    backgroundColor: '#8A2BE2', // Roxo
+    backgroundColor: Colors.accent,
   },
   buttonText: {
     color: '#FFF',

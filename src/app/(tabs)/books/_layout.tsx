@@ -5,28 +5,23 @@ import React from 'react';
 
 export default function TabLayout() {
   const activeColor = Colors.accent;
-  const inactiveColor = '#8e8e93';
-  const bgColor = '#1C1C1E';
+  const inactiveColor = Colors.textSecondary;
+  const bgColor = Colors.background;
 
   return (
     <Tabs
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: inactiveColor,
         tabBarStyle: {
           backgroundColor: bgColor,
           borderTopWidth: 0,
-        },
-        headerStyle: {
-          backgroundColor: bgColor,
-        },
-        headerTintColor: '#FFF',
-        headerTitleAlign: 'center',
+        }
       }}>
       <Tabs.Screen
         name="reading"
         options={{
-          title: 'Lendo',
           tabBarIcon: ({ color }) => (
             <Ionicons name="book" size={24} color={color} />
           ),
@@ -35,7 +30,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="awaiting"
         options={{
-          title: 'Aguardando',
+          tabBarLabel: 'Aguardando',
           tabBarIcon: ({ color }) => (
             <Ionicons name="time-outline" size={24} color={color} />
           ),
@@ -44,7 +39,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="finished"
         options={{
-          title: 'Finalizado',
+          tabBarLabel: 'Finalizados',
           tabBarIcon: ({ color }) => (
             <Ionicons name="checkmark-done" size={24} color={color} />
           ),
@@ -53,7 +48,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="dropped"
         options={{
-          title: 'Parado',
+          tabBarLabel: 'Parados',
           tabBarIcon: ({ color }) => (
             <Ionicons name="pause-circle-outline" size={24} color={color} />
           ),

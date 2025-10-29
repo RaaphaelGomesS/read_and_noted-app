@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/Colors';
 import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
@@ -32,15 +33,41 @@ function CustomDrawerContent(props: any) {
 
 export default function AppLayout() {
   return (
-    <Drawer drawerContent={(props: any) => <CustomDrawerContent {...props} />}>
+    <Drawer drawerContent={(props: any) => <CustomDrawerContent {...props} />}
+    screenOptions={{
+        headerStyle: {
+          backgroundColor: Colors.background,
+        },
+        headerTintColor: Colors.text,
+        headerTitleAlign: 'center',
+        drawerStyle: {
+          backgroundColor: Colors.background,
+          width: 240,  
+        },
+        drawerActiveTintColor: Colors.accent,
+        drawerInactiveTintColor: Colors.textSecondary,
+        drawerActiveBackgroundColor: 'rgba(157, 90, 239, 0.1)',
+      }}
+    >
       <Drawer.Screen
         name="library"
         options={{
-          drawerLabel: 'Minhas Bibliotecas',
+          drawerLabel: 'Bibliotecas',
           title: 'Bibliotecas',
           drawerIcon: ({ color, size }) => (
             <Ionicons name="library-outline" size={size} color={color} />
           ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="books"
+        options={{
+          drawerLabel: 'Livros',
+           title: 'Sua biblioteca',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
+          )
         }}
       />
       
