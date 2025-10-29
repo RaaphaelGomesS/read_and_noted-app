@@ -72,6 +72,16 @@ export const createNoteCategory = async (name: string): Promise<NoteCategory> =>
     }
 };
 
+export const updateNoteCategory = async (id: number, name: string): Promise<NoteCategory> => {
+    try {
+        const data = { id: id, name: name };
+        const response = await api.put<NoteCategory>('/category/', data);
+        return response.data;
+    } catch (error) {
+        throw HandlerError.handleApiError(error, "Não foi possível atualizar a categoria.");
+    }
+};
+
 export const deleteNoteCategory = async (id: number): Promise<void> => {
     try {
         await api.delete(`/category/${id}`);
