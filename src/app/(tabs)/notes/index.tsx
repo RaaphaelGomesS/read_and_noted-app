@@ -47,8 +47,19 @@ export default function NotesScreen() {
     router.push(`/notes/${noteId}`);
   };
 
-  const handleAddPress = () => {
-    router.push('/notes/form');
+const handleAddPress = async () => {
+    setIsLoading(true);
+    try {
+        const newNote = await NoteService.createNote();
+
+        router.push(`/notes/${newNote.id}`);
+
+    } catch (error: any) {
+        console.error("Erro ao criar anotação:", error);
+        Alert.alert("Erro", error.message || "Não foi possível criar a anotação.");
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (

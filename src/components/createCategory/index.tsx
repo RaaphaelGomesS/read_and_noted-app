@@ -3,14 +3,14 @@ import { Colors } from '@/constants/Colors';
 import * as NoteService from '@/service/NoteService';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    StyleSheet,
-    Text,
-    View
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
 import { StyledButton } from '../button';
 import Input from '../input';
@@ -60,7 +60,7 @@ const CreateCategoryModal = ({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Nova Categoria</Text>
+          <Text style={styles.modalTitle}>Nova categoria</Text>
 
           <Input
             placeholder="Nome da Categoria"

@@ -1,15 +1,26 @@
-import { NoteCategory } from '@/@types/auth.types';
-import { Colors } from '@/constants/Colors';
-import * as NoteService from '@/service/NoteService';
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import CategoryEditModal from '../categoryEditModal';
-import Input from '../input';
+import { NoteCategory } from "@/@types/auth.types";
+import { Colors } from "@/constants/Colors";
+import * as NoteService from "@/service/NoteService";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Keyboard,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { StyledButton } from "../button";
+import CategoryEditModal from "../categoryEditModal";
+import Input from "../input";
 
 type CategorySelectModalProps = {
   visible: boolean;
-  currentCategoryName: string;
+  currentCategoryName: string | null;
   onClose: () => void;
   onSelect: (categoryName: string) => void;
 };
@@ -18,21 +29,31 @@ const CategorySelectModal = ({ visible, currentCategoryName, onClose, onSelect }
   const [categories, setCategories] = useState<NoteCategory[]>([]);
   const [filteredCategories, setFilteredCategories] = useState<NoteCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchText, setSearchText] = useState('');
-  
+  const [searchText, setSearchText] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<NoteCategory | null>(null);
 
   useEffect(() => {
     if (visible) {
       fetchCategories();
-      setSearchText('');
+      setSearchText("");
     }
   }, [visible]);
 
   useEffect(() => {
-    const lowerSearch = searchText.toLowerCase();
-    setFilteredCategories(categories.filter(cat => cat.name.toLowerCase().includes(lowerSearch)));
+    const lowerSearch = searchText.toLowerCase().trim();
+    if (lowerSearch === "") {
+      setFilteredCategories(categories);
+      setIsCreating(false);
+    } else {
+      const filtered = categories.filter((cat) => cat.name.toLowerCase().includes(lowerSearch));
+      setFilteredCategories(filtered);
+
+      const exactMatch = categories.some((cat) => cat.name.toLowerCase() === lowerSearch);
+      setIsCreating(!exactMatch);
+    }
   }, [searchText, categories]);
 
   const fetchCategories = async () => {
@@ -53,62 +74,80 @@ const CategorySelectModal = ({ visible, currentCategoryName, onClose, onSelect }
     onClose();
   };
 
-  const handleCreate = async () => {
+  const handleSaveNew = async () => {
     const name = searchText.trim();
-    if (!name) return;
-    
+    if (!name || !isCreating) return;
+
+    Keyboard.dismiss();
+
     onSelect(name);
     onClose();
   };
-  
+
   const openEditModal = (category: NoteCategory) => {
-      setSelectedCategory(category);
-      setEditModalVisible(true);
+    setSelectedCategory(category);
+    setEditModalVisible(true);
   };
-  
+
   const onCategoryUpdated = (updatedCategory: NoteCategory) => {
-      fetchCategories();
+    fetchCategories();
+    if (currentCategoryName === selectedCategory?.name) {
+      onSelect(updatedCategory.name);
+    }
   };
 
   const onCategoryDeleted = (deletedId: number) => {
-      fetchCategories();
-      if (currentCategoryName === selectedCategory?.name) {
-          onSelect('');
-      }
+    fetchCategories();
+    if (currentCategoryName === selectedCategory?.name) {
+      onSelect("");
+    }
   };
 
-  const getCategoryColor = (categoryName: string) => {
+  const getCategoryColor = (categoryName: string | null) => {
+    if (!categoryName) return Colors.surface;
+
     let hash = 0;
-    for (let i = 0; i < categoryName.length; i++) { hash = categoryName.charCodeAt(i) + ((hash << 5) - hash); }
+    for (let i = 0; i < categoryName.length; i++) {
+      hash = categoryName.charCodeAt(i) + ((hash << 5) - hash);
+    }
     return `hsl(${hash % 360}, 70%, 50%)`;
   };
 
   return (
-    <Modal
-      transparent={true}
-      animationType="slide"
-      visible={visible}
-      onRequestClose={onClose}>
+    <Modal transparent={true} animationType="slide" visible={visible} onRequestClose={onClose}>
       <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose}>
         <TouchableOpacity style={styles.modalContainer} activeOpacity={1}>
-          <Text style={styles.modalTitle}>Tags</Text>
+          <Text style={styles.modalTitle}>Categorias</Text>
           <Input
-            placeholder="Selecione uma opção ou crie uma"
+            placeholder="Digite para criar uma nova categoria"
             value={searchText}
             onChangeText={setSearchText}
             style={styles.input}
           />
-          
-          <View style={styles.selectedContainer}>
+
+          {isCreating && searchText.length > 0 && (
+            <StyledButton title={`Salvar "${searchText}"`} onPress={handleSaveNew} style={styles.saveButton} />
+          )}
+
+          {currentCategoryName && (
+            <View style={styles.selectedContainer}>
+              <Text style={styles.listHeader}>Selecionada</Text>
               <View style={[styles.tag, { backgroundColor: getCategoryColor(currentCategoryName) }]}>
-                  <Text style={styles.tagText}>{currentCategoryName}</Text>
-                  <TouchableOpacity onPress={() => onSelect('')}>
-                      <Ionicons name="close" size={16} color={Colors.white} style={{ marginLeft: 4 }} />
-                  </TouchableOpacity>
+                <Text style={styles.tagText}>{currentCategoryName}</Text>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    onSelect("");
+                    onClose();
+                  }}
+                >
+                  <Ionicons name="close" size={16} color={Colors.white} style={{ marginLeft: 4 }} />
+                </TouchableOpacity>
               </View>
-          </View>
-          
-          <Text style={styles.listHeader}>Selecione uma opção ou crie uma</Text>
+            </View>
+          )}
+
+          <Text style={styles.listHeader}>Selecione uma opção</Text>
 
           {isLoading ? (
             <ActivityIndicator color={Colors.accent} style={{ height: 150 }} />
@@ -119,34 +158,31 @@ const CategorySelectModal = ({ visible, currentCategoryName, onClose, onSelect }
               renderItem={({ item }) => (
                 <View style={styles.categoryItem}>
                   <TouchableOpacity style={styles.categoryButton} onPress={() => handleSelect(item)}>
-                     <View style={[styles.tag, { backgroundColor: getCategoryColor(item.name) }]}>
-                        <Text style={styles.tagText}>{item.name}</Text>
-                     </View>
+                    <View style={[styles.tag, { backgroundColor: getCategoryColor(item.name) }]}>
+                      <Text style={styles.tagText}>{item.name}</Text>
+                    </View>
                   </TouchableOpacity>
-                  
                   <TouchableOpacity style={styles.optionsButton} onPress={() => openEditModal(item)}>
                     <Ionicons name="ellipsis-horizontal" size={20} color={Colors.textSecondary} />
                   </TouchableOpacity>
                 </View>
               )}
               ListEmptyComponent={
-                <TouchableOpacity onPress={handleCreate} style={styles.createButton}>
-                   <Text style={styles.createText}>Criar tag "{searchText}"</Text>
-                </TouchableOpacity>
+                !isCreating && searchText ? <Text style={styles.emptyText}>Nenhuma tag encontrada.</Text> : null
               }
               style={styles.list}
+              keyboardShouldPersistTaps="handled"
             />
           )}
-
         </TouchableOpacity>
       </TouchableOpacity>
-      
-      <CategoryEditModal 
-          visible={editModalVisible}
-          category={selectedCategory}
-          onClose={() => setEditModalVisible(false)}
-          onSave={onCategoryUpdated}
-          onDelete={onCategoryDeleted}
+
+      <CategoryEditModal
+        visible={editModalVisible}
+        category={selectedCategory}
+        onClose={() => setEditModalVisible(false)}
+        onSave={onCategoryUpdated}
+        onDelete={onCategoryDeleted}
       />
     </Modal>
   );
@@ -155,13 +191,13 @@ const CategorySelectModal = ({ visible, currentCategoryName, onClose, onSelect }
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContainer: {
-    width: '90%',
-    maxHeight: '60%',
+    width: "90%",
+    maxHeight: "70%",
     backgroundColor: Colors.card,
     borderRadius: 14,
     padding: 20,
@@ -169,60 +205,64 @@ const styles = StyleSheet.create({
   modalTitle: {
     color: Colors.text,
     fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
     marginBottom: 16,
   },
   input: {
-     backgroundColor: Colors.surface,
+    backgroundColor: Colors.surface,
+    color: Colors.text
+  },
+  saveButton: {
+    marginTop: 10,
+    backgroundColor: Colors.accent,
   },
   selectedContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginTop: 10,
+    marginTop: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.surface,
+    paddingBottom: 10,
   },
   listHeader: {
-      color: Colors.textSecondary,
-      fontSize: 12,
-      marginTop: 16,
-      marginBottom: 8,
-      textTransform: 'uppercase',
+    color: Colors.textSecondary,
+    fontSize: 12,
+    marginTop: 16,
+    marginBottom: 8,
+    textTransform: "uppercase",
   },
   list: {
-    maxHeight: 200,
+    maxHeight: 250,
   },
   categoryItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 8,
   },
   categoryButton: {
-      flex: 1,
+    flex: 1,
   },
   tag: {
     borderRadius: 6,
     paddingVertical: 5,
     paddingHorizontal: 10,
     backgroundColor: Colors.accent,
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
   },
   tagText: {
     color: Colors.white,
     fontSize: 14,
   },
   optionsButton: {
-      padding: 8,
+    padding: 8,
   },
-  createButton: {
-      padding: 10,
+  emptyText: {
+    color: Colors.textSecondary,
+    padding: 10,
+    textAlign: "center",
   },
-  createText: {
-      color: Colors.accent,
-      fontSize: 16,
-  }
 });
 
 export default CategorySelectModal;

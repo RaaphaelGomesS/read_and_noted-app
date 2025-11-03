@@ -28,9 +28,9 @@ export const getNoteById = async (id: number): Promise<NoteFull> => {
   }
 };
 
-export const createNote = async (data: NoteRequest): Promise<NoteSummary> => {
+export const createNote = async (): Promise<NoteSummary> => {
   try {
-    const response = await api.post<NoteSummary>('/note/', data);
+    const response = await api.post<NoteSummary>('/note/');
     return response.data;
   } catch (error) {
     throw HandlerError.handleApiError(error, "Não foi possível criar a anotação.");

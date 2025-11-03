@@ -34,7 +34,7 @@ export type Library = {
   description?: string;
 };
 
-export type NoteType = 'QUICK' | 'REFERENCE' | 'PERMANENT';
+export type NoteType = 'Rápida' | 'Referência' | 'Permanente';
 
 export type NoteSummary = {
   id: number;
@@ -74,8 +74,8 @@ export type NoteFilter = {
 export type NoteRequest = {
   id?: number;
   reference?: number;
-  category: string;
-  type: NoteType;
+  category?: string;
+  type?: NoteType;
   title: string;
   content: string;
 };
