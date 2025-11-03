@@ -1,4 +1,5 @@
 import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { LibraryProvider } from '@/context/LibraryContext';
 import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 
@@ -23,10 +24,12 @@ function AuthGuard() {
     } else if (token && inAuthGroup) {
       router.replace('/(tabs)');
     }
-  }, [isLoading]);
+  }, [isLoading, token, segments, router]);
 
-  return (
-    <Stack screenOptions={{ headerShown: false}} />
+return (
+    <LibraryProvider>
+      <Stack screenOptions={{ headerShown: false}} />
+    </LibraryProvider>
   );
 }
 

@@ -4,6 +4,7 @@ import FloatingActionButton from '@/components/floatingButton';
 import LibraryCard from '@/components/libraryCard';
 import OptionsModal from '@/components/optionsModal';
 import { Colors } from '@/constants/Colors';
+import { useLibrary } from '@/context/LibraryContext';
 import * as LibraryService from '@/service/LibraryService';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -11,6 +12,8 @@ import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from 'reac
 
 export default function LibraryScreen() {
   const router = useRouter();
+  const {selectLibrary} = useLibrary();
+
   const [libraries, setLibraries] = useState<Library[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -80,8 +83,10 @@ export default function LibraryScreen() {
   };
 
 
-  const handleCardPress = (library: Library) => {
-    router.push({ pathname: '/books/reading', params: { libraryId: library.id } });
+const handleCardPress = async (library: Library) => {
+    await selectLibrary(library.id);
+    
+    router.push('/books/status/reading'); 
   };
 
   const handleAddPress = () => {

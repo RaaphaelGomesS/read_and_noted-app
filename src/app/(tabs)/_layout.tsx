@@ -69,7 +69,7 @@ export default function AppLayout() {
       />
 
       <Drawer.Screen
-        name="books"
+        name="books/status"
         options={{
           drawerLabel: 'Livros',
            title: 'Sua biblioteca',
