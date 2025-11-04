@@ -1,5 +1,7 @@
 import { Book, BookResponse } from "@/@types/auth.types";
+import AddBookModal from "@/components/addBookModal";
 import BookCard from "@/components/bookCard";
+import FloatingActionButton from "@/components/floatingButton";
 import { Colors } from "@/constants/Colors";
 import { useLibrary } from "@/context/LibraryContext";
 import * as BookService from "@/service/BookService";
@@ -27,7 +29,7 @@ export default function AguardandoScreen() {
   const { selectedLibraryId, isLoading: isLibraryLoading } = useLibrary();
 
   const [books, setBooks] = useState<Book[]>([]);
-
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -111,6 +113,25 @@ export default function AguardandoScreen() {
         ListFooterComponent={renderFooter}
         onRefresh={() => (selectedLibraryId ? fetchBooks(selectedLibraryId, 0) : null)}
         refreshing={isLoading}
+      />
+
+      <FloatingActionButton onPress={() => setIsAddModalVisible(true)} iconName="add" />
+
+      <AddBookModal
+        visible={isAddModalVisible}
+        onClose={() => setIsAddModalVisible(false)}
+        onNavigateToSearch={() => {
+          router.push({
+            pathname: "/books/search",
+            params: { libraryId: selectedLibraryId },
+          });
+        }}
+        onNavigateToForm={() => {
+          router.push({
+            pathname: "/books/form",
+            params: { libraryId: selectedLibraryId },
+          });
+        }}
       />
     </View>
   );

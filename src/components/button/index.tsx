@@ -5,6 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react
 interface StyledButtonProps extends TouchableOpacityProps {
   title: string;
   variant?: 'primary' | 'secondary';
+  loading?: boolean;
 }
 
 export function StyledButton({ title, variant = 'primary', ...props }: StyledButtonProps) {

@@ -89,6 +89,29 @@ export default function AppLayout() {
           ),
         }}
       />
+
+      <Drawer.Screen 
+        name="books/form"
+        options={{ 
+          drawerItemStyle: { display: 'none' },
+          headerShown: true,
+          title: "Adicionar Livro",
+          // presentation: 'modal',
+          headerStyle: { backgroundColor: Colors.background },
+          headerTintColor: Colors.text,
+        }} 
+      />
+      <Drawer.Screen 
+        name="books/search" 
+        options={{ 
+          drawerItemStyle: { display: 'none' },
+          headerShown: true,
+          title: "Buscar Template",
+          // presentation: 'modal',
+          headerStyle: { backgroundColor: Colors.background },
+          headerTintColor: Colors.text,
+        }} 
+      />
       
       <Drawer.Screen 
         name="admin" 

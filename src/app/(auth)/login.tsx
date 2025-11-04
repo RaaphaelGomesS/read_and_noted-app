@@ -8,13 +8,13 @@ import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const { signIn } = useAuth();
 
   async function handlerLogin() {
     try {
-      await signIn({ email, password });
+      await signIn({ identifier, password });
     } catch (error: any) {
       console.log("Erro: ", error);
     }
@@ -24,7 +24,7 @@ export default function Login() {
     <View style={styles.container}>
       <SafeAreaView style={styles.main}>
         <Text style={styles.title}>Logar</Text>
-        <Input placeholder="Usuário ou email" value={email} onChangeText={setEmail}/>
+        <Input placeholder="Usuário ou email" value={identifier} onChangeText={setIdentifier}/>
         <Input placeholder="Senha" secureTextEntry value={password} onChangeText={setPassword}/>
 
         <StyledButton title="Logar" onPress={handlerLogin}></StyledButton>

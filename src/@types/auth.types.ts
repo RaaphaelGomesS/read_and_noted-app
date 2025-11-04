@@ -6,8 +6,7 @@ export interface User {
 }
 
 export type UserRequestDTO = {
-  email?: string;
-  username?: string;
+  identifier?: string;
   password?: string;
 };
 
@@ -103,4 +102,63 @@ export type BookPageDTO = {
   totalPages: number;
   totalElements: number;
   data: BookResponse[];
+};
+
+export type BookTemplate = {
+  id: number;
+  isbn: string;
+  title: string;
+  author: string;
+  publisher: string;
+  edition: string;
+  description: string;
+  year: number;
+  pages: number;
+  img: string;
+  status: string;
+  categories: string[];
+};
+
+export type BookTemplateSearchFilter = {
+  title?: string;
+  author?: string;
+  ISBN?: string;
+  page?: number;
+  pageSize?: number;
+};
+
+export type BookTemplatePageDTO = {
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  totalElements: number;
+  data: BookTemplate[];
+};
+
+export type BookRequest = {
+  id?: number;
+  status: string;
+  pages: number;
+  rating: number;
+  startedDate: string | null;
+  finishedDate: string | null;
+  libraryId: number;
+};
+
+export type BookTemplateRequest = {
+  templateId?: number;
+  isbn?: string;
+  title?: string;
+  author?: string;
+  publisher?: string;
+  edition?: string;
+  description?: string;
+  year?: number;
+  pages?: number;
+  categories?: string[];
+};
+
+export type BookCreateRequest = {
+  book: BookRequest;
+  template: BookTemplateRequest;
 };

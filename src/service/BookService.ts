@@ -1,5 +1,6 @@
-import { BookPageDTO } from "@/@types/auth.types";
+import { BookCreateRequest, BookPageDTO } from "@/@types/auth.types";
 import * as HandlerError from "@/service/HandlerApiException";
+import { Platform } from "react-native";
 import api from "./ConnectionApi";
 
 const getBooksByStatus = async (
@@ -36,4 +37,37 @@ export const getAwaitingBooks = (libraryId: number, page?: number, pageSize?: nu
 
 export const getDroppedBooks = (libraryId: number, page?: number, pageSize?: number) => {
   return getBooksByStatus('dropped', libraryId, page, pageSize);
+};
+
+export const createBook = async (request: BookCreateRequest, imageUri?: string) => {
+  try {
+    const formData = new FormData();
+
+    formData.append('book', JSON.stringify(request));
+
+    if (imageUri && !imageUri.startsWith('http')) {
+      const uriParts = imageUri.split('.');
+      const fileType = uriParts[uriParts.length - 1];
+      
+      const file = {
+          uri: Platform.OS === 'android' ? imageUri : imageUri.replace('file://', ''),
+          name: `cover.${fileType}`,
+          type: `image/${fileType}`,
+      };
+
+      // @ts-ignore
+      formData.append('coverImg', file);
+    }
+
+    const response = await api.post('/book/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return response.data;
+
+  } catch (error) {
+    throw HandlerError.handleApiError(error, "Não foi possível criar o livro.");
+  }
 };
