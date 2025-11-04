@@ -5,7 +5,7 @@ import { DrawerContentScrollView, DrawerItem, DrawerItemList } from "@react-navi
 import { Drawer } from "expo-router/drawer";
 
 function CustomDrawerContent(props: any) {
-  const { role, signOut } = useAuth();
+  const { signOut } = useAuth();
 
   return (
     <DrawerContentScrollView {...props}>
@@ -15,23 +15,13 @@ function CustomDrawerContent(props: any) {
           drawerActiveTintColor: Colors.accent,
         }}
       />
-      {role === "ADMIN" && (
-        <DrawerItem
-          label="Painel admin"
-          labelStyle={{
-            color: Colors.textSecondary,
-          }}
-          icon={({ size }) => <Ionicons name="shield-checkmark-outline" size={size} color={Colors.textSecondary} />}
-          onPress={() => props.navigation.navigate("admin/index")}
-        />
-      )}
 
       <DrawerItem
         label="Sair"
         labelStyle={{
           color: Colors.textSecondary,
         }}
-        icon={({ size }) => <Ionicons name="log-out-outline" size={size} color={Colors.textSecondary} />}
+        icon={({ size }) => <Ionicons name="log-out-outline" size={size} color={"#FF453A"} />}
         onPress={() => signOut()}
       />
     </DrawerContentScrollView>
@@ -39,6 +29,8 @@ function CustomDrawerContent(props: any) {
 }
 
 export default function AppLayout() {
+  const { role } = useAuth();
+
   return (
     <Drawer
       drawerContent={(props: any) => <CustomDrawerContent {...props} />}
@@ -91,13 +83,23 @@ export default function AppLayout() {
         }}
       />
 
+      {role === "ADMIN" && (
+        <Drawer.Screen
+          name="admin"
+          options={{
+            drawerLabel: "Painel Admin",
+            title: "Painel do Administrador",
+            drawerIcon: ({ color, size }) => <Ionicons name="shield-checkmark-outline" size={size} color={color} />,
+          }}
+        />
+      )}
+
       <Drawer.Screen
         name="book-form"
         options={{
           drawerItemStyle: { display: "none" },
           headerShown: true,
           title: "Adicionar Livro",
-          // presentation: 'modal',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.text,
         }}
@@ -108,19 +110,14 @@ export default function AppLayout() {
           drawerItemStyle: { display: "none" },
           headerShown: true,
           title: "Buscar template",
-          // presentation: 'modal',
           headerStyle: { backgroundColor: Colors.background },
           headerTintColor: Colors.text,
         }}
       />
 
-      <Drawer.Screen
-        name="admin"
-        options={{
-          drawerItemStyle: { display: "none" },
-          title: "Painel Admin",
-        }}
-      />
+      <Drawer.Screen name="admin/template/[id]" options={{ drawerItemStyle: { display: "none" } }} />
+      <Drawer.Screen name="admin/template-form" options={{ drawerItemStyle: { display: "none" } }} />
+      <Drawer.Screen name="admin/suggestion/[id]" options={{ drawerItemStyle: { display: "none" } }} />
     </Drawer>
   );
 }

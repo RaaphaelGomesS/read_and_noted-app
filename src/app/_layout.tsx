@@ -7,7 +7,7 @@ import { useEffect } from "react";
 SplashScreen.preventAutoHideAsync();
 
 function AuthGuard() {
-  const { token, isLoading, signOut } = useAuth();
+  const { token, role, isLoading, signOut } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
@@ -26,8 +26,10 @@ function AuthGuard() {
 
     if (!token && !inAuthGroup) {
       router.replace("/(auth)/login");
-    } else if (token && inAuthGroup) {
+    } else if (token && inAuthGroup && role !== "ADMIN") {
       router.replace("/(tabs)");
+    } else if (token && inAuthGroup && role == "ADMIN") {
+      router.replace("/(tabs)/admin/templates");
     }
   }, [isLoading, token, segments, router]);
 
