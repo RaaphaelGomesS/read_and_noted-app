@@ -18,7 +18,7 @@ export default function AdminDashboardLayout() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen options={{ headerShown: true }} />
 
       <Tabs
         screenOptions={{
@@ -51,10 +51,10 @@ export default function AdminDashboardLayout() {
           }}
         />
 
-        <Tabs.Screen name="index" options={{ href: null }} />
-        <Tabs.Screen name="template/[id]" options={{ href: null }} />
-        <Tabs.Screen name="template-form" options={{ href: null }} />
-        <Tabs.Screen name="suggestion/[id]" options={{ href: null }} />
+        <Tabs.Screen name="index" options={{ href: null, tabBarStyle: { display: 'none' } }} />
+        <Tabs.Screen name="template/[id]" options={{ href: null, tabBarStyle: { display: 'none' } }} />
+        <Tabs.Screen name="template-form" options={{ href: null, tabBarStyle: { display: 'none' } }} />
+        <Tabs.Screen name="suggestion/[id]" options={{ href: null, tabBarStyle: { display: 'none' } }} />
       </Tabs>
     </>
   );

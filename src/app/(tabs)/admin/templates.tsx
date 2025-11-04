@@ -19,7 +19,6 @@ export default function TemplatesScreen() {
     else setIsFetchingMore(true);
 
     try {
-      //
       const data = await AdminService.getTemplates("IN_ANALYZE", pageToFetch);
       setTemplates((prev) => (pageToFetch === 0 ? data.data : [...prev, ...data.data]));
       setPage(data.page);

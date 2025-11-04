@@ -87,8 +87,9 @@ export default function AppLayout() {
         <Drawer.Screen
           name="admin"
           options={{
-            drawerLabel: "Painel Admin",
+            drawerLabel: "Painel admin",
             title: "Painel do Administrador",
+            headerShown: true,
             drawerIcon: ({ color, size }) => <Ionicons name="shield-checkmark-outline" size={size} color={color} />,
           }}
         />

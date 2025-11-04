@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     color: Colors.white,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "bold",
   },
   subtitle: {
