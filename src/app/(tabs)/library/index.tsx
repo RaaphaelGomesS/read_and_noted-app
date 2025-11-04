@@ -1,4 +1,3 @@
-// src/app/(tabs)/library/index.tsx
 import { Library } from '@/@types/auth.types';
 import FloatingActionButton from '@/components/floatingButton';
 import LibraryCard from '@/components/libraryCard';
@@ -86,7 +85,7 @@ export default function LibraryScreen() {
 const handleCardPress = async (library: Library) => {
     await selectLibrary(library.id);
     
-    router.push('/books/status/reading'); 
+    router.push('/books/reading'); 
   };
 
   const handleAddPress = () => {

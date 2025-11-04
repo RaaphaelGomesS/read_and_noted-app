@@ -123,13 +123,13 @@ export default function FinalizadoScreen() {
         onClose={() => setIsAddModalVisible(false)}
         onNavigateToSearch={() => {
           router.push({
-            pathname: "/books/search",
+            pathname: "/book-search",
             params: { libraryId: selectedLibraryId },
           });
         }}
         onNavigateToForm={() => {
           router.push({
-            pathname: "/books/form",
+            pathname: "/book-form",
             params: { libraryId: selectedLibraryId },
           });
         }}

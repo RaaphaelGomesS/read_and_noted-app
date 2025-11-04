@@ -30,9 +30,9 @@ const AddBookModal = ({ visible, onClose, onNavigateToSearch, onNavigateToForm }
               <Text style={styles.modalTitle}>Adicionar Novo Livro</Text>
               <Text style={styles.modalSubtitle}>Como você deseja adicionar?</Text>
 
-              <StyledButton title="Buscar Template" onPress={handleSearch} style={styles.button} />
+              <StyledButton title="Buscar template" onPress={handleSearch} style={styles.button} />
               <StyledButton
-                title="Preencher Formulário"
+                title="Preencher formulário"
                 variant="secondary"
                 onPress={handleForm}
                 style={styles.button}

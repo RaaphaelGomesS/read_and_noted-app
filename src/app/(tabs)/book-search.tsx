@@ -43,7 +43,7 @@ export default function BookSearchScreen() {
 
   const handleSelectTemplate = (template: BookTemplate) => {
     router.replace({
-      pathname: "/books/form",
+      pathname: "/book-form",
       params: {
         libraryId: libraryId,
         template: JSON.stringify(template),

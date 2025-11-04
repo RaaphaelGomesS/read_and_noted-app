@@ -24,7 +24,7 @@ const mapApiToUi = (apiBook: BookResponse): Book => {
   };
 };
 
-export default function ParadoScreen() {
+export default function AguardandoScreen() {
   const router = useRouter();
   const { selectedLibraryId, isLoading: isLibraryLoading } = useLibrary();
 
@@ -40,7 +40,7 @@ export default function ParadoScreen() {
     else setIsFetchingMore(true);
 
     try {
-      const response = await BookService.getDroppedBooks(libId, page);
+      const response = await BookService.getAwaitingBooks(libId, page);
       const newBooks = response.data.map(mapApiToUi);
 
       setBooks((prev) => (page === 0 ? newBooks : [...prev, ...newBooks]));
@@ -101,10 +101,10 @@ export default function ParadoScreen() {
       <FlatList
         data={books}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <BookCard book={item} status="parado" onPress={() => handleBookPress(item)} />}
+        renderItem={({ item }) => <BookCard book={item} status="aguardando" onPress={() => handleBookPress(item)} />}
         ListEmptyComponent={
           <View style={styles.center}>
-            <Text style={styles.emptyText}>Nenhum livro parado.</Text>
+            <Text style={styles.emptyText}>Nenhum livro aguardando.</Text>
           </View>
         }
         contentContainerStyle={books.length === 0 ? styles.center : { paddingBottom: 100 }}
@@ -122,13 +122,13 @@ export default function ParadoScreen() {
         onClose={() => setIsAddModalVisible(false)}
         onNavigateToSearch={() => {
           router.push({
-            pathname: "/books/search",
+            pathname: "/book-search",
             params: { libraryId: selectedLibraryId },
           });
         }}
         onNavigateToForm={() => {
           router.push({
-            pathname: "/books/form",
+            pathname: "/book-form",
             params: { libraryId: selectedLibraryId },
           });
         }}
@@ -143,15 +143,15 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     backgroundColor: Colors.background,
   },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   emptyText: {
     color: Colors.textSecondary,
     textAlign: "center",
     marginTop: 50,
     fontSize: 16,
-  },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

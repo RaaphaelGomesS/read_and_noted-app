@@ -1,32 +1,56 @@
-import { Colors } from "@/constants/Colors";
-import { Stack } from "expo-router";
-import React from "react";
+import { Colors } from '@/constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
+import React from 'react';
 
 export default function TabLayout() {
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="tabs" />
-      <Stack.Screen
-        name="form"
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: Colors.accent,
+        tabBarInactiveTintColor: Colors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: Colors.surface,
+          borderTopWidth: 0,
+        }
+      }}>
+      <Tabs.Screen
+        name="reading"
         options={{
-          headerShown: true,
-          title: "Adicionar livro",
-          presentation: "modal",
-          headerStyle: { backgroundColor: Colors.background },
-          headerTintColor: Colors.text,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="book" size={24} color={color} />
+          ),
         }}
       />
-      <Stack.Screen
-        name="search"
+      <Tabs.Screen
+        name="awaiting"
         options={{
-          headerShown: true,
-          title: "Buscar template",
-          presentation: "modal",
-          headerStyle: { backgroundColor: Colors.background },
-          headerTintColor: Colors.text,
+          tabBarLabel: 'Aguardando',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="time-outline" size={24} color={color} />
+          ),
         }}
       />
-    </Stack>
+      <Tabs.Screen
+        name="finished"
+        options={{
+          tabBarLabel: 'Finalizados',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="checkmark-done" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="dropped"
+        options={{
+          tabBarLabel: 'Parados',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="pause-circle-outline" size={24} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }

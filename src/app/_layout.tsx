@@ -1,14 +1,19 @@
-import { AuthProvider, useAuth } from '@/context/AuthContext';
-import { LibraryProvider } from '@/context/LibraryContext';
-import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router';
-import { useEffect } from 'react';
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { LibraryProvider } from "@/context/LibraryContext";
+import { setSignOutCallback } from "@/service/ConnectionApi";
+import { SplashScreen, Stack, useRouter, useSegments } from "expo-router";
+import { useEffect } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
 function AuthGuard() {
-  const { token, isLoading } = useAuth();
+  const { token, isLoading, signOut } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+
+  useEffect(() => {
+    setSignOutCallback(signOut);
+  }, [signOut]);
 
   useEffect(() => {
     if (isLoading) {
@@ -17,18 +22,18 @@ function AuthGuard() {
 
     SplashScreen.hideAsync();
 
-    const inAuthGroup = segments[0] === '(auth)';
+    const inAuthGroup = segments[0] === "(auth)";
 
     if (!token && !inAuthGroup) {
-      router.replace('/(auth)/login');
+      router.replace("/(auth)/login");
     } else if (token && inAuthGroup) {
-      router.replace('/(tabs)');
+      router.replace("/(tabs)");
     }
   }, [isLoading, token, segments, router]);
 
-return (
+  return (
     <LibraryProvider>
-      <Stack screenOptions={{ headerShown: false}} />
+      <Stack screenOptions={{ headerShown: false }} />
     </LibraryProvider>
   );
 }
