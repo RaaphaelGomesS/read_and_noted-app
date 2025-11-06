@@ -1,4 +1,4 @@
-import { Book, BookResponse } from "@/@types/auth.types";
+import { Book, BookResponse } from "@/@types/book.types";
 import AddBookModal from "@/components/addBookModal";
 import BookCard from "@/components/bookCard";
 import EditPagesModal from "@/components/editPagesModal";
@@ -103,7 +103,7 @@ export default function LendoScreen() {
 
   const handleBookPress = (book: Book) => {
     console.log(`Navegando para detalhes do livro: ${book.id}`);
-    // router.push(`/books/${book.id}`); // Próximo passo: criar a tela de detalhes
+    router.push(`/(full)/books/${book.id}`);
   };
 
   const renderFooter = () => {

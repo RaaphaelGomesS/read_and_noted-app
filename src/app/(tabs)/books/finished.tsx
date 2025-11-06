@@ -1,4 +1,4 @@
-import { Book, BookResponse } from "@/@types/auth.types";
+import { Book, BookResponse } from "@/@types/book.types";
 import AddBookModal from "@/components/addBookModal";
 import BookCard from "@/components/bookCard";
 import FloatingActionButton from "@/components/floatingButton";
@@ -81,7 +81,7 @@ export default function FinalizadoScreen() {
 
   const handleBookPress = (book: Book) => {
     console.log(`Navegando para detalhes do livro: ${book.id}`);
-    // router.push(`/books/${book.id}`);
+    router.push(`/(full)/books/${book.id}`);
   };
 
   const renderFooter = () => {

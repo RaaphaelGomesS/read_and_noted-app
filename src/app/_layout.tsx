@@ -57,7 +57,6 @@ function AuthGuard() {
             title: "Adicionar livro",
             headerStyle: { backgroundColor: Colors.background },
             headerTintColor: Colors.text,
-            
           }}
         />
         <Stack.Screen
@@ -67,6 +66,25 @@ function AuthGuard() {
             title: "Buscar template",
             headerStyle: { backgroundColor: Colors.background },
             headerTintColor: Colors.text,
+          }}
+        />
+
+        <Stack.Screen
+          name="(full)/books/[id]"
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: Colors.background },
+            headerTintColor: Colors.text,
+            headerTitle: "",
+          }}
+        />
+        <Stack.Screen
+          name="(full)/suggestion-form"
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: Colors.background },
+            headerTintColor: Colors.text,
+            headerTitle: "Sugerir Melhoria",
           }}
         />
       </Stack>
