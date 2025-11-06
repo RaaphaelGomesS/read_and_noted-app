@@ -5,8 +5,14 @@ export interface User {
   role: "ADMIN" | "DEFAULT";
 }
 
-export type UserRequestDTO = {
+export type LoginRequestDTO = {
   identifier?: string;
+  password?: string;
+};
+
+export type UserRequestDTO = {
+  email?: string;
+  username?: string;
   password?: string;
 };
 

@@ -8,7 +8,7 @@ interface AuthContextData {
   token: string | null;
   role: String | null;
   isLoading: boolean;
-  signIn: (dto: Types.UserRequestDTO) => Promise<void>;
+  signIn: (dto: Types.LoginRequestDTO) => Promise<void>;
   signOut: () => void;
 }
 
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signIn = async (dto: Types.UserRequestDTO) => {
+  const signIn = async (dto: Types.LoginRequestDTO) => {
     setIsLoading(true);
     try {
       const newToken = await UserService.login(dto);

@@ -19,6 +19,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="reading"
         options={{
+          tabBarLabel: 'Lendo',
           tabBarIcon: ({ color }) => (
             <Ionicons name="book" size={24} color={color} />
           ),

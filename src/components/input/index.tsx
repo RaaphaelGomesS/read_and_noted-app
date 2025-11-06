@@ -24,6 +24,7 @@ container: {
     paddingVertical: 18,
     borderRadius: 10,
     fontSize: 16,
-    borderColor: Colors.accent
+    borderWidth: 1,
+    borderColor: Colors.boder
   },
 });

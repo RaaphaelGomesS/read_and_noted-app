@@ -2,9 +2,18 @@ import { StyledButton } from "@/components/button";
 import Input from "@/components/input";
 import { Colors } from "@/constants/Colors";
 import * as LibraryService from "@/service/LibraryService";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function LibraryFormScreen() {
   const router = useRouter();
@@ -79,10 +88,10 @@ export default function LibraryFormScreen() {
       style={styles.keyboardAvoidingContainer}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Stack.Screen options={{ title: isEditing ? "Editar Biblioteca" : "Criar Biblioteca" }} />
+        <Text style={styles.title}>{isEditing ? "Editar biblioteca" : "Criar biblioteca"}</Text>
         <View>
           <Input
-            placeholder="Nome da Biblioteca"
+            placeholder="Nome da biblioteca"
             value={name}
             onChangeText={setName}
             placeholderTextColor={Colors.textSecondary}
@@ -96,7 +105,7 @@ export default function LibraryFormScreen() {
             style={styles.descriptionInput}
             placeholderTextColor={Colors.textSecondary}
           />
-          <View>
+          <View style={styles.containerButton}>
             <StyledButton title="Cancelar" variant="secondary" onPress={handleCancel} disabled={isLoading} />
             <StyledButton title={isLoading ? "Salvando..." : "Salvar"} onPress={handleSave} disabled={isLoading} />
           </View>
@@ -107,6 +116,13 @@ export default function LibraryFormScreen() {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+    color: Colors.text,
+    alignSelf: "center",
+    fontWeight: "bold",
+    padding: 16,
+  },
   keyboardAvoidingContainer: {
     flex: 1,
     backgroundColor: Colors.background,
@@ -115,6 +131,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     padding: 16,
+    paddingBottom: 15
   },
   container: {
     flex: 1,
@@ -123,6 +140,12 @@ const styles = StyleSheet.create({
   center: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  containerButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "space-evenly",
   },
   descriptionInput: {
     height: 100,
@@ -135,6 +158,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 10,
     fontSize: 16,
-    borderColor: Colors.accent,
-  }
+    borderWidth: 1,
+    borderColor: Colors.boder,
+  },
 });

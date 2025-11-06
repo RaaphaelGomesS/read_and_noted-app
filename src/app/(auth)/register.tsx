@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.background,
   },
 
   title: {
@@ -80,10 +80,10 @@ const styles = StyleSheet.create({
     color: Colors.accent,
   },
 
-    error: {
+  error: {
     color: "red",
     textAlign: "center",
     marginBottom: 10,
-    fontSize: 15
+    fontSize: 15,
   },
 });

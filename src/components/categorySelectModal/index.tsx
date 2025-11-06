@@ -119,7 +119,7 @@ const CategorySelectModal = ({ visible, currentCategoryName, onClose, onSelect }
         <TouchableOpacity style={styles.modalContainer} activeOpacity={1}>
           <Text style={styles.modalTitle}>Categorias</Text>
           <Input
-            placeholder="Digite para criar uma nova categoria"
+            placeholder="Digite para encontrar ou criar uma categoria"
             value={searchText}
             onChangeText={setSearchText}
             style={styles.input}
@@ -168,7 +168,7 @@ const CategorySelectModal = ({ visible, currentCategoryName, onClose, onSelect }
                 </View>
               )}
               ListEmptyComponent={
-                !isCreating && searchText ? <Text style={styles.emptyText}>Nenhuma tag encontrada.</Text> : null
+                !isCreating && searchText ? <Text style={styles.emptyText}>Nenhuma categoria encontrada.</Text> : null
               }
               style={styles.list}
               keyboardShouldPersistTaps="handled"
@@ -211,11 +211,15 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: Colors.surface,
-    color: Colors.text
+    color: Colors.text,
   },
   saveButton: {
     marginTop: 10,
     backgroundColor: Colors.accent,
+    paddingVertical: 5,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   selectedContainer: {
     marginTop: 10,
