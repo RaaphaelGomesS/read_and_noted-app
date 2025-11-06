@@ -1,6 +1,7 @@
 import { StyledButton } from "@/components/button";
 import Input from "@/components/input";
 import { Colors } from "@/constants/Colors";
+import { FieldErrors, ValidationError } from "@/service/HandlerApiException";
 import * as UserService from "@/service/UserService";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
@@ -12,6 +13,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<FieldErrors | null>(null);
 
   async function handlerRegister() {
     try {
@@ -19,6 +21,11 @@ export default function Register() {
       router.replace("/(auth)/login");
     } catch (error: any) {
       console.log("Erro: ", error);
+      if (error instanceof ValidationError) {
+        setErrors(error.fieldErrors);
+      } else {
+        setErrors({ general: error.message || "Não foi possível realizar o login." });
+      }
     }
   }
 
@@ -27,8 +34,13 @@ export default function Register() {
       <SafeAreaView style={styles.main}>
         <Text style={styles.title}>Cadastre-se</Text>
         <Input placeholder="Usuário" value={username} onChangeText={setUsername} />
+        {errors?.username && <Text style={styles.error}>{errors.username}</Text>}
         <Input placeholder="Email" value={email} onChangeText={setEmail} />
+        {errors?.email && <Text style={styles.error}>{errors.email}</Text>}
         <Input placeholder="Senha" value={password} onChangeText={setPassword} secureTextEntry />
+        {errors?.password && <Text style={styles.error}>{errors.password}</Text>}
+
+        {errors?.general && <Text style={styles.error}>{errors.general}</Text>}
 
         <StyledButton title="Cadastrar" onPress={handlerRegister}></StyledButton>
 
@@ -81,9 +93,10 @@ const styles = StyleSheet.create({
   },
 
   error: {
-    color: "red",
-    textAlign: "center",
-    marginBottom: 10,
-    fontSize: 15,
+    color: "#E74C3C",
+    fontSize: 14,
+    marginTop: -8,
+    marginBottom: 8,
+    marginLeft: 4,
   },
 });

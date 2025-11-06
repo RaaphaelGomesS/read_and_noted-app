@@ -69,7 +69,7 @@ export default function LendoScreen() {
       if (selectedLibraryId) {
         fetchReadingBooks(selectedLibraryId, 0);
       } else {
-        Alert.alert("Nenhuma Biblioteca", "Selecione uma biblioteca primeiro.", [
+        Alert.alert("Nenhuma biblioteca selecionada", "Selecione uma biblioteca primeiro.", [
           { text: "OK", onPress: () => router.replace("/library") },
         ]);
       }
