@@ -4,6 +4,7 @@ import LibraryCard from "@/components/libraryCard";
 import OptionsModal from "@/components/optionsModal";
 import { Colors } from "@/constants/Colors";
 import { useLibrary } from "@/context/LibraryContext";
+import { AuthError } from "@/service/HandlerApiException";
 import * as LibraryService from "@/service/LibraryService";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
@@ -25,7 +26,9 @@ export default function LibraryScreen() {
       setLibraries(response.libraries);
     } catch (error) {
       console.error("Erro ao buscar bibliotecas:", error);
-      Alert.alert("Erro", "Não foi possível carregar suas bibliotecas.");
+      if (!(error instanceof AuthError)) {
+        Alert.alert("Erro", "Não foi possível carregar suas bibliotecas.");
+      }
     } finally {
       setIsLoading(false);
     }

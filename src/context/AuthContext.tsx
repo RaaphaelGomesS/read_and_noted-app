@@ -57,6 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await loadRoleFromToken(newToken);
     } catch (error) {
       console.error("Falha no login:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
