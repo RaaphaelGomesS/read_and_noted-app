@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { LibraryProvider } from "@/context/LibraryContext";
 import { setSignOutCallback } from "@/service/ConnectionApi";
@@ -35,7 +36,40 @@ function AuthGuard() {
 
   return (
     <LibraryProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+
+        <Stack.Screen
+          name="(full)/notes/[id]"
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: Colors.background },
+            headerTintColor: Colors.text,
+            headerTitle: "",
+            headerShadowVisible: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="(full)/book-form"
+          options={{
+            headerShown: true,
+            title: "Adicionar livro",
+            headerStyle: { backgroundColor: Colors.background },
+            headerTintColor: Colors.text,
+            
+          }}
+        />
+        <Stack.Screen
+          name="(full)/book-search"
+          options={{
+            headerShown: true,
+            title: "Buscar template",
+            headerStyle: { backgroundColor: Colors.background },
+            headerTintColor: Colors.text,
+          }}
+        />
+      </Stack>
     </LibraryProvider>
   );
 }

@@ -83,42 +83,18 @@ export default function AppLayout() {
         }}
       />
 
-      {role === "ADMIN" && (
-        <Drawer.Screen
-          name="admin"
-          options={{
-            drawerLabel: "Painel admin",
-            title: "Painel do Administrador",
-            headerShown: true,
-            drawerIcon: ({ color, size }) => <Ionicons name="shield-checkmark-outline" size={size} color={color} />,
-          }}
-        />
-      )}
-
       <Drawer.Screen
-        name="book-form"
+        name="admin"
         options={{
-          drawerItemStyle: { display: "none" },
+          drawerLabel: "Painel admin",
+          title: "Painel do administrador",
           headerShown: true,
-          title: "Adicionar Livro",
-          headerStyle: { backgroundColor: Colors.background },
-          headerTintColor: Colors.text,
+          drawerItemStyle: {
+            display: role === "ADMIN" ? "flex" : "none",
+          },
+          drawerIcon: ({ color, size }) => <Ionicons name="shield-checkmark-outline" size={size} color={color} />,
         }}
       />
-      <Drawer.Screen
-        name="book-search"
-        options={{
-          drawerItemStyle: { display: "none" },
-          headerShown: true,
-          title: "Buscar template",
-          headerStyle: { backgroundColor: Colors.background },
-          headerTintColor: Colors.text,
-        }}
-      />
-
-      <Drawer.Screen name="admin/template/[id]" options={{ drawerItemStyle: { display: "none" } }} />
-      <Drawer.Screen name="admin/template-form" options={{ drawerItemStyle: { display: "none" } }} />
-      <Drawer.Screen name="admin/suggestion/[id]" options={{ drawerItemStyle: { display: "none" } }} />
     </Drawer>
   );
 }

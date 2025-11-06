@@ -43,7 +43,7 @@ export default function BookSearchScreen() {
 
   const handleSelectTemplate = (template: BookTemplate) => {
     router.replace({
-      pathname: "/book-form",
+      pathname: "/(full)/book-form",
       params: {
         libraryId: libraryId,
         template: JSON.stringify(template),
@@ -53,14 +53,14 @@ export default function BookSearchScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: "Buscar Template" }} />
+      <Stack.Screen options={{ title: "Buscar template" }} />
 
       <View style={styles.searchBarContainer}>
         <View style={styles.inputContainer}>
           <Ionicons name="search" size={20} color={Colors.textSecondary} style={styles.searchIcon} />
           <TextInput
             style={styles.input}
-            placeholder="Dostoievski..."
+            placeholder="Título, autor ou ISBN"
             placeholderTextColor={Colors.textSecondary}
             value={searchText}
             onChangeText={setSearchText}

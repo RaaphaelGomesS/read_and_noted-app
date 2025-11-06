@@ -1,21 +1,9 @@
 import { Colors } from "@/constants/Colors";
-import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, Tabs } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
 
 export default function AdminDashboardLayout() {
-  const { role } = useAuth();
-
-  if (role !== "ADMIN") {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: Colors.background }}>
-        <Text style={{ color: Colors.text }}>Acesso Negado.</Text>
-      </View>
-    );
-  }
-
   return (
     <>
       <Stack.Screen options={{ headerShown: true }} />

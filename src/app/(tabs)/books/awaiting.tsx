@@ -122,13 +122,13 @@ export default function AguardandoScreen() {
         onClose={() => setIsAddModalVisible(false)}
         onNavigateToSearch={() => {
           router.push({
-            pathname: "/book-search",
+            pathname: "/(full)/book-search",
             params: { libraryId: selectedLibraryId },
           });
         }}
         onNavigateToForm={() => {
           router.push({
-            pathname: "/book-form",
+            pathname: "/(full)/book-form",
             params: { libraryId: selectedLibraryId },
           });
         }}
