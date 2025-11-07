@@ -1,4 +1,4 @@
-import { Suggestion } from "@/@types/auth.types";
+import { Suggestion } from "@/@types/suggestion.type";
 import { Colors } from "@/constants/Colors";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";

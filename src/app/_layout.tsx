@@ -94,7 +94,7 @@ function AuthGuard() {
             headerShown: true,
             headerStyle: { backgroundColor: Colors.background },
             headerTintColor: Colors.text,
-            headerTitle: "Sugerir Melhoria",
+            headerTitle: "Sugerir alteração",
           }}
         />
       </Stack>

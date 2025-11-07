@@ -1,8 +1,8 @@
-import { Book, BookStatus } from "@/@types/auth.types";
+import { Book, BookStatus } from "@/@types/book.types";
 import { Colors } from "@/constants/Colors";
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type BookCardProps = {
   book: Book;
@@ -12,8 +12,7 @@ type BookCardProps = {
 };
 
 const BookCard = ({ book, status, onPress, onEditPress }: BookCardProps) => {
-  const progress =
-    book.totalPages > 0 ? (book.readPages / book.totalPages) * 100 : 0;
+  const progress = book.totalPages > 0 ? (book.readPages / book.totalPages) * 100 : 0;
 
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
@@ -21,18 +20,16 @@ const BookCard = ({ book, status, onPress, onEditPress }: BookCardProps) => {
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{book.title}</Text>
         <Text style={styles.author}>{book.author}</Text>
-        {status === 'lendo' && (
+        {status === "lendo" && (
           <View style={styles.progressWrapper}>
             <View style={styles.progressBarBackground}>
-              <View
-                style={[styles.progressBarFill, { width: `${progress}%` }]}
-              />
+              <View style={[styles.progressBarFill, { width: `${progress}%` }]} />
             </View>
             <Text style={styles.progressText}>{Math.floor(progress)}%</Text>
           </View>
         )}
       </View>
-      {status === 'lendo' && (
+      {status === "lendo" && (
         <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
           <Ionicons name="create-outline" size={24} color="#FFF" />
         </TouchableOpacity>
@@ -43,14 +40,14 @@ const BookCard = ({ book, status, onPress, onEditPress }: BookCardProps) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: Colors.card,
     borderRadius: 12,
     padding: 12,
     marginVertical: 8,
     marginHorizontal: 16,
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -64,11 +61,11 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flex: 1,
     marginLeft: 12,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.text,
     marginBottom: 4,
   },
@@ -77,20 +74,20 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   progressWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 16,
   },
   progressBarBackground: {
     flex: 1,
     height: 8,
-    backgroundColor: '#555',
+    backgroundColor: "#555",
     borderRadius: 4,
     marginRight: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressBarFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: Colors.accent,
     borderRadius: 4,
   },
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
     minWidth: 30,
   },
   editButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 10,
     padding: 4,

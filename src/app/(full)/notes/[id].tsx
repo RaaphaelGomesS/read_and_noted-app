@@ -1,4 +1,4 @@
-import { NoteFull, NoteRequest } from "@/@types/auth.types";
+import { NoteFull, NoteRequest } from "@/@types/note.types";
 import CategorySelectModal from "@/components/categorySelectModal";
 import { getMarkdownRules, getMarkdownStyles, initializeMarkdownRouter } from "@/components/markdownContent";
 import OptionsModal from "@/components/optionsModal";
@@ -221,7 +221,6 @@ export default function NoteDetailScreen() {
               <Text style={styles.tagText}>{note.type}</Text>
             </View>
           </TouchableOpacity>
-          {/* Você pode adicionar mais propriedades aqui, como Referência de Livro */}
         </View>
 
         <View style={styles.divider} />
@@ -358,7 +357,11 @@ const styles = StyleSheet.create({
     minHeight: 300,
     textAlignVertical: "top",
   },
-  pickerOverlay: { flex: 1, backgroundColor: "rgba(0, 0, 0, 0.7)", justifyContent: "flex-end" },
+  pickerOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "flex-end",
+  },
   pickerContainer: {
     backgroundColor: Colors.card,
     ...(Platform.OS === "android" && { borderRadius: 14, margin: 10 }),
@@ -373,6 +376,6 @@ const styles = StyleSheet.create({
   metaValueNone: {
     color: Colors.textSecondary,
     fontSize: 15,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 });

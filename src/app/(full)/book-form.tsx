@@ -1,10 +1,12 @@
-import { BookCreateRequest, BookRequest, BookTemplate, BookTemplateRequest } from "@/@types/auth.types";
+import { BookCreateRequest, BookRequest } from "@/@types/book.types";
+import { BookTemplate, BookTemplateRequest } from "@/@types/template.types";
 import { StyledButton } from "@/components/button";
 import Input from "@/components/input";
 import { Colors } from "@/constants/Colors";
 import * as BookService from "@/service/BookService";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -25,7 +27,6 @@ export default function BookFormScreen() {
   const [template, setTemplate] = useState<BookTemplate | null>(null);
   const [isTemplateFieldsDisabled, setIsTemplateFieldsDisabled] = useState(false);
 
-  // Template
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [totalPages, setTotalPages] = useState("");
@@ -37,7 +38,6 @@ export default function BookFormScreen() {
   const [categories, setCategories] = useState("");
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  //Livro
   const [status, setStatus] = useState<BookStatus>("WANT_TO_READ");
   const [readPages, setReadPages] = useState("");
   const [rating, setRating] = useState("");
@@ -66,6 +66,27 @@ export default function BookFormScreen() {
       setImageUri(parsedTemplate.img || null);
     }
   }, [params.template]);
+
+  const handleImagePick = async () => {
+    if (isTemplateFieldsDisabled) {
+      Alert.alert(
+        "Ação bloqueada",
+        "Para alterar a capa de um template existente, por favor, crie uma sugestão de melhoria na tela de detalhes do livro."
+      );
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [2, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
 
   const handleSave = async () => {
     const libId = parseInt(params.libraryId, 10);
@@ -103,24 +124,21 @@ export default function BookFormScreen() {
       finishedDate: finishedAt ? finishedAt.toISOString() : null,
     };
 
-    // Monta o DTO final
     const createRequest: BookCreateRequest = {
       book: bookRequest,
       template: templateRequest,
     };
 
     try {
-      // Envia para a API de serviço (que lida com o FormData)
       await BookService.createBook(createRequest, imageUri || undefined);
-      router.back(); // Volta para a tela anterior
+      router.back();
     } catch (error: any) {
-      Alert.alert("Erro ao Salvar", error.message);
+      Alert.alert("Erro ao salvar", error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // --- Funções do DatePicker ---
   const onStartDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     setShowStartDatePicker(false);
     if (selectedDate) setStartedAt(selectedDate);
@@ -132,14 +150,9 @@ export default function BookFormScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: isTemplateFieldsDisabled ? "Adicionar Livro" : "Formulário Completo" }} />
+      <Stack.Screen options={{ title: isTemplateFieldsDisabled ? "Adicionar livro" : "Formulário completo" }} />
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
-        <TouchableOpacity
-          style={styles.coverContainer}
-          onPress={() => {
-            /* TODO: Image Picker */
-          }}
-        >
+        <TouchableOpacity style={styles.coverContainer} onPress={handleImagePick}>
           {imageUri ? (
             <Image source={{ uri: imageUri }} style={styles.coverImage} />
           ) : (
@@ -154,7 +167,7 @@ export default function BookFormScreen() {
         <Input placeholder="Autor" value={author} onChangeText={setAuthor} editable={!isTemplateFieldsDisabled} />
         <View style={styles.row}>
           <Input
-            placeholder="Páginas Totais"
+            placeholder="Páginas totais"
             value={totalPages}
             onChangeText={setTotalPages}
             keyboardType="number-pad"
@@ -225,19 +238,19 @@ export default function BookFormScreen() {
           ))}
         </View>
 
-        <Input placeholder="Páginas Lidas" value={readPages} onChangeText={setReadPages} keyboardType="number-pad" />
+        <Input placeholder="Páginas lidas" value={readPages} onChangeText={setReadPages} keyboardType="number-pad" />
 
         <View style={styles.row}>
           <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowStartDatePicker(true)}>
             <Text style={styles.datePickerText}>
-              {startedAt ? `Início: ${startedAt.toLocaleDateString()}` : "Data de Início"}
+              {startedAt ? `Início: ${startedAt.toLocaleDateString()}` : "Data de início"}
             </Text>
           </TouchableOpacity>
 
           {status === "READ" && (
             <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowFinishDatePicker(true)}>
               <Text style={styles.datePickerText}>
-                {finishedAt ? `Término: ${finishedAt.toLocaleDateString()}` : "Data de Término"}
+                {finishedAt ? `Término: ${finishedAt.toLocaleDateString()}` : "Data de término"}
               </Text>
             </TouchableOpacity>
           )}
@@ -275,10 +288,25 @@ export default function BookFormScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  scrollContainer: { padding: 16, paddingBottom: 50 },
-  coverContainer: { width: 150, height: 220, alignSelf: "center", marginBottom: 20 },
-  coverImage: { width: "100%", height: "100%", borderRadius: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  scrollContainer: {
+    padding: 16,
+    paddingBottom: 50,
+  },
+  coverContainer: {
+    width: 150,
+    height: 220,
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+  coverImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
+  },
   coverPlaceholder: {
     width: "100%",
     height: "100%",
@@ -287,17 +315,68 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  coverPlaceholderText: { color: Colors.textSecondary, marginTop: 10 },
-  row: { flexDirection: "row", justifyContent: "space-between", gap: 10 },
-  flexInput: { flex: 1, marginBottom: 0 }, // Remove margem de baixo para linhas
-  textArea: { height: 120, textAlignVertical: "top", paddingTop: 18 },
-  divider: { height: 1, backgroundColor: Colors.card, marginVertical: 20 },
-  label: { color: Colors.textSecondary, fontSize: 16, marginLeft: 4, marginBottom: 8 },
-  statusContainer: { flexDirection: "row", justifyContent: "space-around", marginBottom: 16, gap: 10 },
-  statusButton: { flex: 1, paddingVertical: 12, backgroundColor: Colors.card, borderRadius: 8, alignItems: "center" },
-  statusButtonActive: { backgroundColor: Colors.accent },
-  statusText: { color: Colors.textSecondary, fontWeight: "500" },
-  statusTextActive: { color: Colors.white, fontWeight: "bold" },
-  datePickerButton: { flex: 1, backgroundColor: Colors.card, padding: 18, borderRadius: 10, alignItems: "center" },
-  datePickerText: { color: Colors.textSecondary, fontSize: 16 },
+  coverPlaceholderText: {
+    color: Colors.textSecondary,
+    marginTop: 10,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  flexInput: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: "top",
+    paddingTop: 18,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Colors.card,
+    marginVertical: 20,
+  },
+  label: {
+    color: Colors.textSecondary,
+    fontSize: 16,
+    marginLeft: 4,
+    marginBottom: 8,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 16,
+    gap: 10,
+  },
+  statusButton: {
+    flex: 1,
+    paddingVertical: 12,
+    backgroundColor: Colors.card,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  statusButtonActive: {
+    backgroundColor: Colors.accent,
+  },
+  statusText: {
+    color: Colors.textSecondary,
+    fontWeight: "500",
+  },
+  statusTextActive: {
+    color: Colors.white,
+    fontWeight: "bold",
+  },
+  datePickerButton: {
+    flex: 1,
+    backgroundColor: Colors.card,
+    padding: 18,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  datePickerText: {
+    color: Colors.textSecondary,
+    fontSize: 16,
+  },
 });

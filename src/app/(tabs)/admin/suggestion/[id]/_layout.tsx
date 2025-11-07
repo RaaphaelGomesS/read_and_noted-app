@@ -58,13 +58,34 @@ export default function SuggestionDetailLayout() {
   }, [suggestionId]);
 
   const handleApprove = async () => {
-    // ... (lógica de aprovação)
-  };
-  const handleDecline = async () => {
-    // ... (lógica de recusa)
+    if (!details) return;
+    setIsLoading(true);
+    try {
+      await AdminService.approveSuggestion(suggestionId);
+      Alert.alert("Sucesso", "Sugestão aprovada.", [{ text: "OK", onPress: () => router.back() }]);
+    } catch (error: any) {
+      Alert.alert("Erro ao aprovar", error.message);
+      setIsLoading(false);
+    }
   };
 
-  if (isLoading || !details) {
+  const handleDecline = async () => {
+    if (!details || !justification.trim()) {
+      Alert.alert("Erro", "A justificativa é obrigatória para recusar.");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await AdminService.declineSuggestion(suggestionId, justification);
+      Alert.alert("Sucesso", "Sugestão recusada.", [{ text: "OK", onPress: () => router.back() }]);
+      setIsDeclineModalVisible(false);
+    } catch (error: any) {
+      Alert.alert("Erro ao recusar", error.message);
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading && !details) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={Colors.accent} />
@@ -72,12 +93,16 @@ export default function SuggestionDetailLayout() {
     );
   }
 
+  if (!details) {
+    return null;
+  }
+
   return (
     <SuggestionContext.Provider value={{ details, isLoading }}>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.reasonBox}>
-            <Text style={styles.reasonTitle}>Motivo da sugestão:</Text>
+            <Text style={styles.reasonTitle}>Motivo da sugestão (por @{details.updated.suggesterUsername}):</Text>
             <Text style={styles.reasonText}>{details.updated.reason}</Text>
           </View>
 
@@ -105,8 +130,18 @@ export default function SuggestionDetailLayout() {
         </ScrollView>
 
         <View style={styles.buttonContainer}>
-          <StyledButton title="Aprovar" onPress={handleApprove} style={styles.approveButton} />
-          <StyledButton title="Recusar" onPress={() => setIsDeclineModalVisible(true)} style={styles.declineButton} />
+          <StyledButton
+            title={isLoading ? "Aprovando..." : "Aprovar"}
+            onPress={handleApprove}
+            style={styles.approveButton}
+            disabled={isLoading}
+          />
+          <StyledButton
+            title={isLoading ? "Recusando..." : "Recusar"}
+            onPress={() => setIsDeclineModalVisible(true)}
+            style={styles.declineButton}
+            disabled={isLoading}
+          />
         </View>
 
         <DeclineModal
@@ -162,14 +197,16 @@ const styles = StyleSheet.create({
   approveButton: {
     backgroundColor: "#2ECC71",
     flex: 1,
+    marginTop: 0,
   },
   declineButton: {
     backgroundColor: "#E74C3C",
     flex: 1,
+    marginTop: 0,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
     justifyContent: "center",
     alignItems: "center",
     padding: 20,

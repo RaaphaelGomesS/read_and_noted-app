@@ -43,6 +43,9 @@ export default function AguardandoScreen() {
       const response = await BookService.getAwaitingBooks(libId, page);
       const newBooks = response.data.map(mapApiToUi);
 
+      console.log(response);
+      console.log(newBooks);
+
       setBooks((prev) => (page === 0 ? newBooks : [...prev, ...newBooks]));
       setCurrentPage(response.page);
       setTotalPages(response.totalPages);
@@ -64,7 +67,7 @@ export default function AguardandoScreen() {
       if (selectedLibraryId) {
         fetchBooks(selectedLibraryId, 0);
       } else {
-        Alert.alert("Nenhuma Biblioteca", "Selecione uma biblioteca primeiro.", [
+        Alert.alert("Nenhuma biblioteca", "Selecione uma biblioteca primeiro.", [
           { text: "OK", onPress: () => router.replace("/library") },
         ]);
       }

@@ -1,4 +1,4 @@
-import { NoteCategory } from "@/@types/auth.types";
+import { NoteCategory } from "@/@types/note.types";
 import { Colors } from "@/constants/Colors";
 import * as NoteService from "@/service/NoteService";
 import { Ionicons } from "@expo/vector-icons";

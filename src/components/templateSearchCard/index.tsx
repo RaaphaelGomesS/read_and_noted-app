@@ -1,4 +1,4 @@
-import { BookTemplate } from "@/@types/auth.types";
+import { BookTemplate } from "@/@types/template.types";
 import { Colors } from "@/constants/Colors";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";

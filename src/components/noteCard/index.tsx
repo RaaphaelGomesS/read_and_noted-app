@@ -1,4 +1,4 @@
-import { NoteSummary } from "@/@types/auth.types";
+import { NoteSummary } from "@/@types/note.types";
 import { Colors } from "@/constants/Colors";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";

@@ -1,4 +1,4 @@
-import { NoteFull } from "@/@types/auth.types";
+import { NoteFull } from "@/@types/note.types";
 import { Colors } from "@/constants/Colors";
 import * as NoteService from "@/service/NoteService";
 import { useRouter } from "expo-router";
