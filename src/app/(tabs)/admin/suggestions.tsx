@@ -1,4 +1,4 @@
-import { Suggestion } from "@/@types/auth.types";
+import { Suggestion } from "@/@types/suggestion.type";
 import SuggestionCard from "@/components/suggestionCard";
 import { Colors } from "@/constants/Colors";
 import * as AdminService from "@/service/AdminService";

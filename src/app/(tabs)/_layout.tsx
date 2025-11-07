@@ -84,6 +84,16 @@ export default function AppLayout() {
       />
 
       <Drawer.Screen
+        name="statistics/index"
+        options={{
+          drawerLabel: "Estatísticas",
+          title: "Estatísticas",
+          drawerIcon: ({ color, size }) => <Ionicons name="stats-chart-outline" size={size} color={color} />,
+          headerShown: true,
+        }}
+      />
+
+      <Drawer.Screen
         name="admin"
         options={{
           drawerLabel: "Painel admin",

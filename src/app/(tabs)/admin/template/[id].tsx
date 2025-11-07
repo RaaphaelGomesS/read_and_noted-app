@@ -1,4 +1,4 @@
-import { BookTemplate } from "@/@types/auth.types";
+import { BookTemplate } from "@/@types/template.types";
 import { StyledButton } from "@/components/button";
 import TemplateDisplay from "@/components/templateDisplay";
 import { Colors } from "@/constants/Colors";

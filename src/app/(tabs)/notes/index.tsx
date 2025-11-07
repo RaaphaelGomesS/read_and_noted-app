@@ -1,19 +1,19 @@
-import { NoteFilter as NoteFilterType, NoteSummary } from '@/@types/auth.types';
-import FloatingActionButton from '@/components/floatingButton';
-import NoteCard from '@/components/noteCard';
-import { Colors } from '@/constants/Colors';
-import * as NoteService from '@/service/NoteService';
-import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect, useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { NoteFilter as NoteFilterType, NoteSummary } from "@/@types/note.types";
+import FloatingActionButton from "@/components/floatingButton";
+import NoteCard from "@/components/noteCard";
+import { Colors } from "@/constants/Colors";
+import * as NoteService from "@/service/NoteService";
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function NotesScreen() {
   const router = useRouter();
   const [notes, setNotes] = useState<NoteSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<NoteFilterType>({ page: 0, pageSize: 20 });
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const fetchNotes = async (currentFilter: NoteFilterType) => {
     setIsLoading(true);
@@ -36,7 +36,7 @@ export default function NotesScreen() {
   );
 
   const handleSearch = () => {
-    setFilter(prev => ({ ...prev, title: searchText, page: 0 }));
+    setFilter((prev) => ({ ...prev, title: searchText, page: 0 }));
   };
 
   const handleOpenFilters = () => {
@@ -47,18 +47,17 @@ export default function NotesScreen() {
     router.push(`/notes/${noteId}`);
   };
 
-const handleAddPress = async () => {
+  const handleAddPress = async () => {
     setIsLoading(true);
     try {
-        const newNote = await NoteService.createNote();
+      const newNote = await NoteService.createNote();
 
-        router.push(`/notes/${newNote.id}`);
-
+      router.push(`/notes/${newNote.id}`);
     } catch (error: any) {
-        console.error("Erro ao criar anotação:", error);
-        Alert.alert("Erro", error.message || "Não foi possível criar a anotação.");
+      console.error("Erro ao criar anotação:", error);
+      Alert.alert("Erro", error.message || "Não foi possível criar a anotação.");
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -88,16 +87,9 @@ const handleAddPress = async () => {
         <FlatList
           data={notes}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <NoteCard
-              note={item}
-              onPress={() => handleCardPress(item.id)}
-            />
-          )}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>Nenhuma anotação encontrada.</Text>
-          }
-          contentContainerStyle={notes.length === 0 ? styles.center : {paddingBottom: 100}}
+          renderItem={({ item }) => <NoteCard note={item} onPress={() => handleCardPress(item.id)} />}
+          ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma anotação encontrada.</Text>}
+          contentContainerStyle={notes.length === 0 ? styles.center : { paddingBottom: 100 }}
           onRefresh={() => fetchNotes(filter)}
           refreshing={isLoading}
         />
@@ -116,20 +108,20 @@ const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 8,
   },
   inputContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: Colors.card,
     borderRadius: 10,
     paddingHorizontal: 12,
@@ -149,7 +141,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 50,
     fontSize: 16,
   },

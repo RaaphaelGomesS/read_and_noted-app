@@ -1,4 +1,4 @@
-import { Library } from "@/@types/auth.types";
+import { Library } from "@/@types/library.types";
 import FloatingActionButton from "@/components/floatingButton";
 import LibraryCard from "@/components/libraryCard";
 import OptionsModal from "@/components/optionsModal";

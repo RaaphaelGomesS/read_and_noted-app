@@ -283,11 +283,31 @@ export default function BookDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  center: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: Colors.background },
-  scrollContainer: { padding: 16, paddingBottom: 50 },
-  coverContainer: { width: 150, height: 220, alignSelf: "center", marginBottom: 20 },
-  coverImage: { width: "100%", height: "100%", borderRadius: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.background,
+  },
+  scrollContainer: {
+    padding: 16,
+    paddingBottom: 50,
+  },
+  coverContainer: {
+    width: 150,
+    height: 220,
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+  coverImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
+  },
   coverPlaceholder: {
     width: "100%",
     height: "100%",
@@ -296,16 +316,64 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  row: { flexDirection: "row", justifyContent: "space-between", gap: 10 },
-  flexInput: { flex: 1, marginBottom: 0 },
-  textArea: { height: 120, textAlignVertical: "top", paddingTop: 18 },
-  divider: { height: 1, backgroundColor: Colors.card, marginVertical: 20 },
-  label: { color: Colors.textSecondary, fontSize: 16, marginLeft: 4, marginBottom: 8 },
-  statusContainer: { flexDirection: "row", justifyContent: "space-around", marginBottom: 16, gap: 10 },
-  statusButton: { flex: 1, paddingVertical: 12, backgroundColor: Colors.card, borderRadius: 8, alignItems: "center" },
-  statusButtonActive: { backgroundColor: Colors.accent },
-  statusText: { color: Colors.textSecondary, fontWeight: "500" },
-  statusTextActive: { color: Colors.white, fontWeight: "bold" },
-  datePickerButton: { flex: 1, backgroundColor: Colors.card, padding: 18, borderRadius: 10, alignItems: "center" },
-  datePickerText: { color: Colors.textSecondary, fontSize: 16 },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  flexInput: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: "top",
+    paddingTop: 18,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Colors.card,
+    marginVertical: 20,
+  },
+  label: {
+    color: Colors.textSecondary,
+    fontSize: 16,
+    marginLeft: 4,
+    marginBottom: 8,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 16,
+    gap: 10,
+  },
+  statusButton: {
+    flex: 1,
+    paddingVertical: 12,
+    backgroundColor: Colors.card,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  statusButtonActive: {
+    backgroundColor: Colors.accent,
+  },
+  statusText: {
+    color: Colors.textSecondary,
+    fontWeight: "500",
+  },
+  statusTextActive: {
+    color: Colors.white,
+    fontWeight: "bold",
+  },
+  datePickerButton: {
+    flex: 1,
+    backgroundColor: Colors.card,
+    padding: 18,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  datePickerText: {
+    color: Colors.textSecondary,
+    fontSize: 16,
+  },
 });

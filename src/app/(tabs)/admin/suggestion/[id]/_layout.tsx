@@ -1,4 +1,4 @@
-import { SuggestionDetails } from "@/@types/auth.types";
+import { SuggestionDetails } from "@/@types/suggestion.type";
 import { StyledButton } from "@/components/button";
 import Input from "@/components/input";
 import { Colors } from "@/constants/Colors";

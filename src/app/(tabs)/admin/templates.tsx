@@ -1,4 +1,4 @@
-import { BookTemplate } from "@/@types/auth.types";
+import { BookTemplate } from "@/@types/template.types";
 import TemplateCard from "@/components/templateCard";
 import { Colors } from "@/constants/Colors";
 import * as AdminService from "@/service/AdminService";
