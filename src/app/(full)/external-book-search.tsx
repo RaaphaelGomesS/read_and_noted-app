@@ -1,15 +1,25 @@
 import { ExternalBookData, ExternalBookSearchResult } from "@/@types/externalBook.types";
 import ISBNScannerModal from "@/components/isbnConnectorModal";
+import SimpleSelectModal, { OptionItem } from "@/components/simpleSelectModal";
 import TemplateSearchCard from "@/components/templateSearchCard";
 import { Colors } from "@/constants/Colors";
 import * as ExternalBookService from "@/service/ExternalBookService";
 import { Ionicons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type SearchMode = "query" | "isbn";
+
+const SEARCH_OPTIONS: OptionItem[] = [
+  { label: "Buscar por Título/Autor", value: "query" },
+  { label: "Buscar por ISBN", value: "isbn" },
+];
+
+const SEARCH_LABELS: Record<SearchMode, string> = {
+  query: "Buscar por Título/Autor",
+  isbn: "Buscar por ISBN",
+};
 
 export default function ExternalBookSearchScreen() {
   const router = useRouter();
@@ -20,6 +30,7 @@ export default function ExternalBookSearchScreen() {
   const [searchText, setSearchText] = useState("");
   const [searchMode, setSearchMode] = useState<SearchMode>("query");
   const [isScannerVisible, setIsScannerVisible] = useState(false);
+  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
 
   const handleSearch = async (textToSearch: string = searchText) => {
     if (!textToSearch.trim()) return;
@@ -66,18 +77,10 @@ export default function ExternalBookSearchScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{ title: "Buscar na OpenLibrary" }} />
 
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={searchMode}
-          onValueChange={(itemValue) => setSearchMode(itemValue)}
-          style={styles.picker}
-          dropdownIconColor={Colors.text}
-          itemStyle={styles.pickerItem}
-        >
-          <Picker.Item label="Buscar por Título/Autor" value="query" color={Colors.text} />
-          <Picker.Item label="Buscar por ISBN" value="isbn" color={Colors.text} />
-        </Picker>
-      </View>
+      <TouchableOpacity style={styles.pickerButton} onPress={() => setSearchModalVisible(true)}>
+        <Text style={styles.pickerButtonText}>{SEARCH_LABELS[searchMode]}</Text>
+        <Ionicons name="chevron-down" size={20} color={Colors.textSecondary} />
+      </TouchableOpacity>
 
       <View style={styles.searchBarContainer}>
         <View style={styles.inputContainer}>
@@ -136,6 +139,17 @@ export default function ExternalBookSearchScreen() {
         onClose={() => setIsScannerVisible(false)}
         onBarcodeScanned={handleBarcodeScanned}
       />
+
+      <SimpleSelectModal
+        visible={isSearchModalVisible}
+        onClose={() => setSearchModalVisible(false)}
+        options={SEARCH_OPTIONS}
+        title="Selecione o modo de busca"
+        currentValue={searchMode}
+        onSelect={(value) => {
+          setSearchMode(value as SearchMode);
+        }}
+      />
     </View>
   );
 }
@@ -159,7 +173,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
   },
-  searchIcon: { marginRight: 8 },
+  searchIcon: {
+    marginRight: 8,
+  },
   input: {
     flex: 1,
     color: Colors.text,
@@ -170,19 +186,22 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 8,
   },
-  pickerContainer: {
+  pickerButton: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: Colors.card,
     borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     marginHorizontal: 16,
     marginBottom: 10,
     marginTop: 10,
-  },
-  picker: {
-    color: Colors.text,
     height: 50,
   },
-  pickerItem: {
+  pickerButtonText: {
     color: Colors.text,
+    fontSize: 16,
   },
   emptyText: {
     color: Colors.textSecondary,

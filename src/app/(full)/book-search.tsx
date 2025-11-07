@@ -1,25 +1,39 @@
 import { BookTemplate, BookTemplateSearchFilter } from "@/@types/template.types";
 import { StyledButton } from "@/components/button";
+import SimpleSelectModal, { OptionItem } from "@/components/simpleSelectModal";
 import TemplateSearchCard from "@/components/templateSearchCard";
 import { Colors } from "@/constants/Colors";
 import * as BookTemplateService from "@/service/BookTemplateService";
 import { Ionicons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type FilterType = "title" | "author" | "ISBN";
+
+const FILTER_OPTIONS: OptionItem[] = [
+  { label: "Buscar por título", value: "title" },
+  { label: "Buscar por autor", value: "author" },
+  { label: "Buscar por ISBN", value: "ISBN" },
+];
+
+const FILTER_LABELS: Record<FilterType, string> = {
+  title: "Buscar por título",
+  author: "Buscar por autor",
+  ISBN: "Buscar por ISBN",
+};
 
 export default function BookSearchScreen() {
   const router = useRouter();
   const { libraryId } = useLocalSearchParams<{ libraryId: string }>();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<BookTemplate[]>([]);
   const [searchText, setSearchText] = useState("");
-  const [filterType, setFilterType] = useState<FilterType>("title");
+  const [placeholder, setPlaceholder] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [results, setResults] = useState<BookTemplate[]>([]);
+  const [filterType, setFilterType] = useState<FilterType>("title");
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 
   const handleSearch = async () => {
     if (!searchText.trim()) return;
@@ -68,6 +82,26 @@ export default function BookSearchScreen() {
     });
   };
 
+  useEffect(() => {
+    switch (filterType) {
+      case "author":
+        setPlaceholder("Dostoiévski...");
+        break;
+
+      case "title":
+        setPlaceholder("Crime e castigo...");
+        break;
+
+      case "ISBN":
+        setPlaceholder("9788573266467...");
+        break;
+
+      default:
+        setPlaceholder("Crime e castigo...");
+        break;
+    }
+  }, [filterType]);
+
   const renderEmptyComponent = () => {
     if (isLoading) return null;
     if (!hasSearched) {
@@ -77,7 +111,7 @@ export default function BookSearchScreen() {
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Nenhum template interno encontrado.</Text>
         <Text style={styles.emptySubtitle}>O que deseja fazer?</Text>
-        <StyledButton title="Buscar em API Externa" onPress={navigateToExternalSearch} style={styles.emptyButton} />
+        <StyledButton title="Buscar em API externa" onPress={navigateToExternalSearch} style={styles.emptyButton} />
         <StyledButton
           title="Preencher do zero"
           onPress={navigateToBlankForm}
@@ -96,7 +130,7 @@ export default function BookSearchScreen() {
           <Ionicons name="search" size={20} color={Colors.textSecondary} style={styles.searchIcon} />
           <TextInput
             style={styles.input}
-            placeholder="Dostoiévski..."
+            placeholder={placeholder}
             placeholderTextColor={Colors.textSecondary}
             value={searchText}
             onChangeText={setSearchText}
@@ -108,19 +142,10 @@ export default function BookSearchScreen() {
           <Ionicons name="filter" size={24} color={Colors.text} />
         </TouchableOpacity>
       </View>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={filterType}
-          onValueChange={(itemValue) => setFilterType(itemValue)}
-          style={styles.picker}
-          dropdownIconColor={Colors.text}
-          itemStyle={styles.pickerItem}
-        >
-          <Picker.Item label="Buscar por título" value="title" color={Colors.text} />
-          <Picker.Item label="Buscar por autor" value="author" color={Colors.text} />
-          <Picker.Item label="Buscar por ISBN" value="ISBN" color={Colors.text} />
-        </Picker>
-      </View>
+      <TouchableOpacity style={styles.pickerButton} onPress={() => setFilterModalVisible(true)}>
+        <Text style={styles.pickerButtonText}>{FILTER_LABELS[filterType]}</Text>
+        <Ionicons name="chevron-down" size={20} color={Colors.textSecondary} />
+      </TouchableOpacity>
 
       {isLoading ? (
         <ActivityIndicator size="large" color={Colors.accent} style={{ marginTop: 20 }} />
@@ -133,6 +158,17 @@ export default function BookSearchScreen() {
           contentContainerStyle={{ paddingBottom: 50 }}
         />
       )}
+
+      <SimpleSelectModal
+        visible={isFilterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        options={FILTER_OPTIONS}
+        title="Selecione o filtro"
+        currentValue={filterType}
+        onSelect={(value) => {
+          setFilterType(value as FilterType);
+        }}
+      />
     </View>
   );
 }
@@ -157,7 +193,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
   },
-  searchIcon: { marginRight: 8 },
+  searchIcon: {
+    marginRight: 8,
+  },
   input: {
     flex: 1,
     color: Colors.text,
@@ -168,20 +206,22 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 8,
   },
-  pickerContainer: {
+  pickerButton: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: Colors.card,
     borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     marginHorizontal: 16,
     marginBottom: 10,
-  },
-  picker: {
-    color: Colors.text,
     height: 50,
   },
-  pickerItem: {
+  pickerButtonText: {
     color: Colors.text,
+    fontSize: 16,
   },
-
   emptyContainer: {
     alignItems: "center",
     paddingHorizontal: 32,
@@ -191,6 +231,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     textAlign: "center",
     fontSize: 16,
+    marginTop: 15,
   },
   emptySubtitle: {
     color: Colors.text,

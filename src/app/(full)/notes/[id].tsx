@@ -2,18 +2,16 @@ import { NoteFull, NoteRequest } from "@/@types/note.types";
 import CategorySelectModal from "@/components/categorySelectModal";
 import { getMarkdownRules, getMarkdownStyles, initializeMarkdownRouter } from "@/components/markdownContent";
 import OptionsModal from "@/components/optionsModal";
+import SimpleSelectModal, { OptionItem } from "@/components/simpleSelectModal";
 import { Colors } from "@/constants/Colors";
 import { useDebounce } from "@/hooks/useDebounce";
 import * as NoteService from "@/service/NoteService";
 import { Ionicons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Modal,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -23,7 +21,11 @@ import {
 } from "react-native";
 import MarkdownDisplay from "react-native-markdown-display";
 
-const NOTE_TYPES: NoteRequest["type"][] = ["Rápida", "Referência", "Permanente"];
+const NOTE_TYPE_OPTIONS: OptionItem[] = [
+  { label: "Rápida", value: "Rápida" },
+  { label: "Referência", value: "Referência" },
+  { label: "Permanente", value: "Permanente" },
+];
 
 export default function NoteDetailScreen() {
   const router = useRouter();
@@ -258,30 +260,16 @@ export default function NoteDetailScreen() {
         }}
       />
 
-      <Modal
-        transparent={true}
-        animationType="fade"
+      <SimpleSelectModal
         visible={isTypeModalVisible}
-        onRequestClose={() => setTypeModalVisible(false)}
-      >
-        <TouchableOpacity style={styles.pickerOverlay} onPress={() => setTypeModalVisible(false)}>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={note.type}
-              onValueChange={(itemValue: NoteFull["type"]) => {
-                handlePropertyChange("type", itemValue);
-                setTypeModalVisible(false);
-              }}
-              style={styles.picker}
-              itemStyle={styles.pickerItem}
-            >
-              {NOTE_TYPES.map((type) => (
-                <Picker.Item key={type} label={type} value={type} color={Colors.text} />
-              ))}
-            </Picker>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        onClose={() => setTypeModalVisible(false)}
+        options={NOTE_TYPE_OPTIONS}
+        title="Selecione o tipo da nota"
+        currentValue={note.type}
+        onSelect={(value) => {
+          handlePropertyChange("type", value as NoteFull["type"]);
+        }}
+      />
     </View>
   );
 }
@@ -356,22 +344,6 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     minHeight: 300,
     textAlignVertical: "top",
-  },
-  pickerOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    justifyContent: "flex-end",
-  },
-  pickerContainer: {
-    backgroundColor: Colors.card,
-    ...(Platform.OS === "android" && { borderRadius: 14, margin: 10 }),
-  },
-  picker: {
-    color: Colors.text,
-    ...(Platform.OS === "ios" && { height: 200 }),
-  },
-  pickerItem: {
-    color: Colors.text,
   },
   metaValueNone: {
     color: Colors.textSecondary,
