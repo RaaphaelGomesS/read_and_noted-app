@@ -1,4 +1,5 @@
-import { BookTemplate, BookTemplateSearchFilter } from "@/@types/auth.types";
+import { BookTemplate, BookTemplateSearchFilter } from "@/@types/template.types";
+import { StyledButton } from "@/components/button";
 import TemplateSearchCard from "@/components/templateSearchCard";
 import { Colors } from "@/constants/Colors";
 import * as BookTemplateService from "@/service/BookTemplateService";
@@ -18,12 +19,14 @@ export default function BookSearchScreen() {
   const [results, setResults] = useState<BookTemplate[]>([]);
   const [searchText, setSearchText] = useState("");
   const [filterType, setFilterType] = useState<FilterType>("title");
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = async () => {
     if (!searchText.trim()) return;
 
     setIsLoading(true);
     setResults([]);
+    setHasSearched(true);
 
     const filter: BookTemplateSearchFilter = {
       [filterType]: searchText.trim(),
@@ -51,16 +54,49 @@ export default function BookSearchScreen() {
     });
   };
 
+  const navigateToExternalSearch = () => {
+    router.push({
+      pathname: "/(full)/external-book-search",
+      params: { libraryId },
+    });
+  };
+
+  const navigateToBlankForm = () => {
+    router.push({
+      pathname: "/(full)/book-form",
+      params: { libraryId },
+    });
+  };
+
+  const renderEmptyComponent = () => {
+    if (isLoading) return null;
+    if (!hasSearched) {
+      return <Text style={styles.emptyText}>Busque por templates na sua base de dados.</Text>;
+    }
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>Nenhum template interno encontrado.</Text>
+        <Text style={styles.emptySubtitle}>O que deseja fazer?</Text>
+        <StyledButton title="Buscar em API Externa" onPress={navigateToExternalSearch} style={styles.emptyButton} />
+        <StyledButton
+          title="Preencher do zero"
+          onPress={navigateToBlankForm}
+          variant="secondary"
+          style={styles.emptyButton}
+        />
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: "Buscar template" }} />
-
       <View style={styles.searchBarContainer}>
         <View style={styles.inputContainer}>
           <Ionicons name="search" size={20} color={Colors.textSecondary} style={styles.searchIcon} />
           <TextInput
             style={styles.input}
-            placeholder="Título, autor ou ISBN"
+            placeholder="Dostoiévski..."
             placeholderTextColor={Colors.textSecondary}
             value={searchText}
             onChangeText={setSearchText}
@@ -68,18 +104,10 @@ export default function BookSearchScreen() {
             returnKeyType="search"
           />
         </View>
-        {/* Botão de Filtro (abre um modal) */}
-        <TouchableOpacity
-          style={styles.filterButton}
-          onPress={() => {
-            /* TODO: Abrir Modal de Filtro */
-          }}
-        >
+        <TouchableOpacity style={styles.filterButton} onPress={() => {}}>
           <Ionicons name="filter" size={24} color={Colors.text} />
         </TouchableOpacity>
       </View>
-
-      {/* Seletor de Tipo de Filtro */}
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={filterType}
@@ -88,8 +116,8 @@ export default function BookSearchScreen() {
           dropdownIconColor={Colors.text}
           itemStyle={styles.pickerItem}
         >
-          <Picker.Item label="Buscar por Título" value="title" color={Colors.text} />
-          <Picker.Item label="Buscar por Autor" value="author" color={Colors.text} />
+          <Picker.Item label="Buscar por título" value="title" color={Colors.text} />
+          <Picker.Item label="Buscar por autor" value="author" color={Colors.text} />
           <Picker.Item label="Buscar por ISBN" value="ISBN" color={Colors.text} />
         </Picker>
       </View>
@@ -101,7 +129,7 @@ export default function BookSearchScreen() {
           data={results}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <TemplateSearchCard template={item} onSelect={() => handleSelectTemplate(item)} />}
-          ListEmptyComponent={<Text style={styles.emptyText}>Nenhum template encontrado.</Text>}
+          ListEmptyComponent={renderEmptyComponent}
           contentContainerStyle={{ paddingBottom: 50 }}
         />
       )}
@@ -110,7 +138,10 @@ export default function BookSearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -127,8 +158,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   searchIcon: { marginRight: 8 },
-  input: { flex: 1, color: Colors.text, paddingVertical: 12, fontSize: 16 },
-  filterButton: { padding: 10, marginLeft: 8 },
+  input: {
+    flex: 1,
+    color: Colors.text,
+    paddingVertical: 12,
+    fontSize: 16,
+  },
+  filterButton: {
+    padding: 10,
+    marginLeft: 8,
+  },
   pickerContainer: {
     backgroundColor: Colors.card,
     borderRadius: 10,
@@ -139,6 +178,29 @@ const styles = StyleSheet.create({
     color: Colors.text,
     height: 50,
   },
-  pickerItem: { color: Colors.text },
-  emptyText: { color: Colors.textSecondary, textAlign: "center", marginTop: 50, fontSize: 16 },
+  pickerItem: {
+    color: Colors.text,
+  },
+
+  emptyContainer: {
+    alignItems: "center",
+    paddingHorizontal: 32,
+    marginTop: 50,
+  },
+  emptyText: {
+    color: Colors.textSecondary,
+    textAlign: "center",
+    fontSize: 16,
+  },
+  emptySubtitle: {
+    color: Colors.text,
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  emptyButton: {
+    width: "100%",
+    marginVertical: 5,
+  },
 });

@@ -40,6 +40,16 @@ function AuthGuard() {
         <Stack.Screen name="(tabs)" />
 
         <Stack.Screen
+          name="(full)/external-book-search"
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: Colors.background },
+            headerTintColor: Colors.text,
+            headerTitle: "Busca externa",
+          }}
+        />
+
+        <Stack.Screen
           name="(full)/notes/[id]"
           options={{
             headerShown: true,
