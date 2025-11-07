@@ -21,3 +21,13 @@ export type UserResponseDTO = {
   email: string;
   username: string;
 };
+
+export type UserUpdateDTO = {
+  email: string;
+  username: string;
+};
+
+export type PasswordChangeRequest = {
+  currentPassword: string;
+  newPassword: string;
+};

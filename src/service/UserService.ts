@@ -1,4 +1,4 @@
-import { UserRequestDTO } from "@/@types/auth.types";
+import { PasswordChangeRequest, UserRequestDTO, UserResponseDTO, UserUpdateDTO } from "@/@types/auth.types";
 import * as HandlerError from "@/service/HandlerApiException";
 import api from "./ConnectionApi";
 
@@ -20,28 +20,36 @@ export const login = async (reqData: UserRequestDTO) => {
   }
 };
 
-export const getUser = async () => {
+export const getUser = async (): Promise<UserResponseDTO> => {
   try {
-    const response = await api.get("/user");
+    const response = await api.get("/user/"); //
     return response.data;
   } catch (error) {
     throw HandlerError.handleApiError(error, "Não foi possível consultar as informações do usuário.");
   }
 };
 
-export const updateUser = async (userData: UserRequestDTO) => {
+export const updateUser = async (userData: UserUpdateDTO): Promise<UserResponseDTO> => {
   try {
-    const response = await api.put("/user", userData);
+    const response = await api.put("/user/", userData); //
     return response.data;
   } catch (error) {
     throw HandlerError.handleApiError(error, "Não foi possível atualizar o usuário.");
   }
 };
 
-export const deleteUser = async (userId: number) => {
+export const deleteUser = async (userId: number): Promise<void> => {
   try {
     await api.delete(`/user/${userId}`);
   } catch (error) {
     throw HandlerError.handleApiError(error, "Não foi possível deletar o usuário.");
+  }
+};
+
+export const changePassword = async (reqData: PasswordChangeRequest): Promise<void> => {
+  try {
+    await api.post("/user/password", reqData);
+  } catch (error) {
+    throw HandlerError.handleApiError(error, "Não foi possível alterar a senha.");
   }
 };

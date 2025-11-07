@@ -94,6 +94,16 @@ export default function AppLayout() {
       />
 
       <Drawer.Screen
+        name="profile/index"
+        options={{
+          drawerLabel: "Meu Perfil",
+          title: "Meu Perfil",
+          drawerIcon: ({ color, size }) => <Ionicons name="person-circle-outline" size={size} color={color} />,
+          headerShown: true,
+        }}
+      />
+
+      <Drawer.Screen
         name="admin"
         options={{
           drawerLabel: "Painel admin",
