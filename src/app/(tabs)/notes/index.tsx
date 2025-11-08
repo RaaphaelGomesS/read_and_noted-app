@@ -1,4 +1,5 @@
-import { NoteFilter as NoteFilterType, NoteSummary } from "@/@types/note.types";
+import { NoteCategory, NoteFilter as NoteFilterType, NoteSummary } from "@/@types/note.types";
+import FilterModal, { SelectedFilters } from "@/components/filterModal";
 import FloatingActionButton from "@/components/floatingButton";
 import NoteCard from "@/components/noteCard";
 import { Colors } from "@/constants/Colors";
@@ -10,16 +11,62 @@ import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, Toucha
 
 export default function NotesScreen() {
   const router = useRouter();
-  const [notes, setNotes] = useState<NoteSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<NoteFilterType>({ page: 0, pageSize: 20 });
   const [searchText, setSearchText] = useState("");
+  const [notes, setNotes] = useState<NoteSummary[]>([]);
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+  const [availableCategories, setAvailableCategories] = useState<NoteCategory[]>([]);
+  const [activeCategoryName, setActiveCategoryName] = useState<string | null>(null);
+  const [filter, setFilter] = useState<NoteFilterType>({
+    page: 0,
+    pageSize: 20,
+    title: "",
+    type: undefined,
+    categoryId: undefined,
+  });
+
+  const fetchCategories = async () => {
+    try {
+      const cats = await NoteService.getNoteCategories();
+      setAvailableCategories(cats);
+    } catch (error: any) {
+      console.warn("Não foi possível carregar categorias para filtro:", error.message);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchNotes(filter);
+    }, [filter])
+  );
+
+  const handleSearch = () => {
+    setFilter((prev) => ({ ...prev, title: searchText, page: 0 }));
+  };
+
+  const handleApplyFilter = (newFilters: SelectedFilters) => {
+    setFilter((prev) => ({
+      ...prev,
+      page: 0,
+      type: newFilters.type,
+      categoryId: newFilters.categoryId,
+    }));
+
+    if (newFilters.categoryId) {
+      setActiveCategoryName(availableCategories.find((c) => c.id === newFilters.categoryId)?.name || null);
+    } else {
+      setActiveCategoryName(null);
+    }
+  };
+
+  const handleOpenFilters = () => {
+    setFilterModalVisible(true);
+  };
 
   const fetchNotes = async (currentFilter: NoteFilterType) => {
     setIsLoading(true);
     try {
       const response = await NoteService.getNotes(currentFilter);
-
       setNotes(response.data);
     } catch (error) {
       console.error("Erro ao buscar anotações:", error);
@@ -35,13 +82,11 @@ export default function NotesScreen() {
     }, [filter])
   );
 
-  const handleSearch = () => {
-    setFilter((prev) => ({ ...prev, title: searchText, page: 0 }));
-  };
-
-  const handleOpenFilters = () => {
-    Alert.alert("Filtros", "O modal de filtros avançados será implementado aqui.");
-  };
+  useFocusEffect(
+    useCallback(() => {
+      fetchCategories();
+    }, [])
+  );
 
   const handleCardPress = (noteId: number) => {
     router.push(`/notes/${noteId}`);
@@ -78,7 +123,13 @@ export default function NotesScreen() {
         </View>
         <TouchableOpacity style={styles.filterButton} onPress={handleOpenFilters}>
           <Ionicons name="filter" size={24} color={Colors.text} />
+          {filter.type && <View style={styles.filterActiveDot} />}
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.activeFiltersContainer}>
+        {filter.type && <Text style={styles.activeFilterText}>Tipo: {filter.type}</Text>}
+        {activeCategoryName && <Text style={styles.activeFilterText}>Categoria: {activeCategoryName}</Text>}
       </View>
 
       {isLoading ? (
@@ -96,7 +147,14 @@ export default function NotesScreen() {
       )}
 
       <FloatingActionButton onPress={handleAddPress} iconName="add" />
-      {/* TODO: Adicionar <FilterModal /> aqui */}
+
+      <FilterModal
+        visible={isFilterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        onApply={handleApplyFilter}
+        currentFilters={{ type: filter.type, categoryId: filter.categoryId }}
+        availableCategories={availableCategories}
+      />
     </View>
   );
 }
@@ -138,11 +196,38 @@ const styles = StyleSheet.create({
   filterButton: {
     padding: 10,
     marginLeft: 8,
+    position: "relative",
   },
   emptyText: {
     color: Colors.textSecondary,
     textAlign: "center",
     marginTop: 50,
     fontSize: 16,
+  },
+  filterActiveDot: {
+    position: "absolute",
+    top: 10,
+    right: 8,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.accent,
+  },
+  activeFiltersContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+    gap: 10,
+    marginBottom: 4,
+  },
+  activeFilterText: {
+    color: Colors.textSecondary,
+    fontSize: 12,
+    backgroundColor: Colors.card,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    overflow: "hidden",
   },
 });

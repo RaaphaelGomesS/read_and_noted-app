@@ -68,13 +68,25 @@ const mapOpenLibraryISBNToSearchResult = (book: any, isbn: string): ExternalBook
   };
 };
 
-export const searchOpenLibraryByQuery = async (query: string): Promise<ExternalBookSearchResult[]> => {
+export const searchOpenLibraryByQuery = async (
+  query: string,
+  mode: "title" | "author"
+): Promise<ExternalBookSearchResult[]> => {
   try {
+    const params: any = {
+      limit: 20,
+    };
+
+    if (mode === "title") {
+      params.title = query;
+    } else if (mode === "author") {
+      params.author = query;
+    } else {
+      params.q = query;
+    }
+
     const response = await openLibraryApi.get("/search.json", {
-      params: {
-        q: query,
-        limit: 20,
-      },
+      params: params,
     });
 
     if (response.data && response.data.docs) {

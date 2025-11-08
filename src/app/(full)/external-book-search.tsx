@@ -9,17 +9,13 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-type SearchMode = "query" | "isbn";
+type SearchMode = "title" | "author" | "isbn";
 
 const SEARCH_OPTIONS: OptionItem[] = [
-  { label: "Buscar por Título/Autor", value: "query" },
+  { label: "Buscar por título", value: "title" },
+  { label: "Buscar por autor", value: "author" },
   { label: "Buscar por ISBN", value: "isbn" },
 ];
-
-const SEARCH_LABELS: Record<SearchMode, string> = {
-  query: "Buscar por Título/Autor",
-  isbn: "Buscar por ISBN",
-};
 
 export default function ExternalBookSearchScreen() {
   const router = useRouter();
@@ -28,9 +24,9 @@ export default function ExternalBookSearchScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<ExternalBookSearchResult[]>([]);
   const [searchText, setSearchText] = useState("");
-  const [searchMode, setSearchMode] = useState<SearchMode>("query");
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isScannerVisible, setIsScannerVisible] = useState(false);
-  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
+  const [searchMode, setSearchMode] = useState<SearchMode>("title");
 
   const handleSearch = async (textToSearch: string = searchText) => {
     if (!textToSearch.trim()) return;
@@ -40,10 +36,10 @@ export default function ExternalBookSearchScreen() {
 
     try {
       let response: ExternalBookSearchResult[] = [];
-      if (searchMode === "query") {
-        response = await ExternalBookService.searchOpenLibraryByQuery(textToSearch.trim());
-      } else {
+      if (searchMode === "isbn") {
         response = await ExternalBookService.searchOpenLibraryByISBN(textToSearch.trim());
+      } else {
+        response = await ExternalBookService.searchOpenLibraryByQuery(textToSearch.trim(), searchMode);
       }
       setResults(response);
     } catch (error: any) {
@@ -70,17 +66,16 @@ export default function ExternalBookSearchScreen() {
   };
 
   const getPlaceholder = () => {
-    return searchMode === "query" ? "Buscar por título ou autor..." : "Buscar por ISBN...";
+    return searchMode === "title"
+      ? "Buscar por título..."
+      : searchMode === "author"
+      ? "Buscar por autor..."
+      : "Buscar por ISBN...";
   };
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: "Buscar na OpenLibrary" }} />
-
-      <TouchableOpacity style={styles.pickerButton} onPress={() => setSearchModalVisible(true)}>
-        <Text style={styles.pickerButtonText}>{SEARCH_LABELS[searchMode]}</Text>
-        <Ionicons name="chevron-down" size={20} color={Colors.textSecondary} />
-      </TouchableOpacity>
 
       <View style={styles.searchBarContainer}>
         <View style={styles.inputContainer}>
@@ -102,6 +97,10 @@ export default function ExternalBookSearchScreen() {
             <Ionicons name="camera-outline" size={24} color={Colors.text} />
           </TouchableOpacity>
         )}
+
+        <TouchableOpacity style={styles.filterButton} onPress={() => setIsModalVisible(true)}>
+          <Ionicons name="filter" size={24} color={Colors.text} />
+        </TouchableOpacity>
       </View>
 
       {isLoading ? (
@@ -141,10 +140,10 @@ export default function ExternalBookSearchScreen() {
       />
 
       <SimpleSelectModal
-        visible={isSearchModalVisible}
-        onClose={() => setSearchModalVisible(false)}
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
         options={SEARCH_OPTIONS}
-        title="Selecione o modo de busca"
+        title="Selecione o Modo de Busca"
         currentValue={searchMode}
         onSelect={(value) => {
           setSearchMode(value as SearchMode);

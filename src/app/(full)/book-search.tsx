@@ -83,23 +83,10 @@ export default function BookSearchScreen() {
   };
 
   useEffect(() => {
-    switch (filterType) {
-      case "author":
-        setPlaceholder("Dostoiévski...");
-        break;
+    const placeholder =
+      filterType === "title" ? "Crime e castigo..." : filterType === "author" ? "Dostoiévski..." : "9788573266467...";
 
-      case "title":
-        setPlaceholder("Crime e castigo...");
-        break;
-
-      case "ISBN":
-        setPlaceholder("9788573266467...");
-        break;
-
-      default:
-        setPlaceholder("Crime e castigo...");
-        break;
-    }
+    setPlaceholder(placeholder);
   }, [filterType]);
 
   const renderEmptyComponent = () => {
@@ -138,14 +125,10 @@ export default function BookSearchScreen() {
             returnKeyType="search"
           />
         </View>
-        <TouchableOpacity style={styles.filterButton} onPress={() => {}}>
+        <TouchableOpacity style={styles.filterButton} onPress={() => setFilterModalVisible(true)}>
           <Ionicons name="filter" size={24} color={Colors.text} />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.pickerButton} onPress={() => setFilterModalVisible(true)}>
-        <Text style={styles.pickerButtonText}>{FILTER_LABELS[filterType]}</Text>
-        <Ionicons name="chevron-down" size={20} color={Colors.textSecondary} />
-      </TouchableOpacity>
 
       {isLoading ? (
         <ActivityIndicator size="large" color={Colors.accent} style={{ marginTop: 20 }} />
