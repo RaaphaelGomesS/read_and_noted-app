@@ -71,7 +71,7 @@ export default function BookFormScreen() {
     if (isTemplateFieldsDisabled) {
       Alert.alert(
         "Ação bloqueada",
-        "Para alterar a capa de um template existente, por favor, crie uma sugestão de melhoria na tela de detalhes do livro."
+        "Não é possível alterar a capa de um template, caso errado, crie uma sugestão de alteração."
       );
       return;
     }
@@ -165,36 +165,18 @@ export default function BookFormScreen() {
 
         <Input placeholder="Título" value={title} onChangeText={setTitle} editable={!isTemplateFieldsDisabled} />
         <Input placeholder="Autor" value={author} onChangeText={setAuthor} editable={!isTemplateFieldsDisabled} />
-        <View style={styles.row}>
-          <Input
-            placeholder="Páginas totais"
-            value={totalPages}
-            onChangeText={setTotalPages}
-            keyboardType="number-pad"
-            style={styles.flexInput}
-            editable={!isTemplateFieldsDisabled}
-          />
-          <Input
-            placeholder="Ano"
-            value={year}
-            onChangeText={setYear}
-            keyboardType="number-pad"
-            style={styles.flexInput}
-            editable={!isTemplateFieldsDisabled}
-          />
-        </View>
         <Input
-          placeholder="Editora"
-          value={publisher}
-          onChangeText={setPublisher}
+          placeholder="ISBN"
+          value={isbn}
+          onChangeText={setIsbn}
+          keyboardType="number-pad"
           editable={!isTemplateFieldsDisabled}
         />
-        <View style={styles.row}>
+        <View style={styles.inputRow}>
           <Input
-            placeholder="ISBN"
-            value={isbn}
-            onChangeText={setIsbn}
-            keyboardType="number-pad"
+            placeholder="Editora"
+            value={publisher}
+            onChangeText={setPublisher}
             style={styles.flexInput}
             editable={!isTemplateFieldsDisabled}
           />
@@ -206,6 +188,25 @@ export default function BookFormScreen() {
             editable={!isTemplateFieldsDisabled}
           />
         </View>
+        <View style={styles.inputRow}>
+          <Input
+            placeholder="Páginas totais"
+            value={totalPages}
+            onChangeText={setTotalPages}
+            keyboardType="number-pad"
+            style={styles.flexInput}
+            editable={!isTemplateFieldsDisabled}
+          />
+          <Input
+            placeholder="Ano de publicação"
+            value={year}
+            onChangeText={setYear}
+            keyboardType="number-pad"
+            style={styles.flexInput}
+            editable={!isTemplateFieldsDisabled}
+          />
+        </View>
+
         <Input
           placeholder="Descrição"
           value={description}
@@ -262,13 +263,19 @@ export default function BookFormScreen() {
             value={rating}
             onChangeText={setRating}
             keyboardType="number-pad"
+            style={styles.ratingInput}
             maxLength={1}
           />
         )}
 
-        <View style={[styles.row, { marginTop: 20 }]}>
-          <StyledButton title="Cancelar" variant="secondary" onPress={() => router.back()} style={styles.flexInput} />
-          <StyledButton title="Salvar" onPress={handleSave} style={styles.flexInput} loading={isLoading} />
+        <View style={[styles.inputRow, { marginTop: 20 }]}>
+          <StyledButton
+            title="Cancelar"
+            variant="secondary"
+            onPress={() => router.back()}
+            style={[styles.flexButton, styles.flexCancelButton]}
+          />
+          <StyledButton title="Salvar" onPress={handleSave} style={styles.flexButton} loading={isLoading} />
         </View>
 
         {showStartDatePicker && (
@@ -319,6 +326,12 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     marginTop: 10,
   },
+  inputRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "47.7%",
+    gap: 20,
+  },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -327,11 +340,53 @@ const styles = StyleSheet.create({
   flexInput: {
     flex: 1,
     marginBottom: 0,
+    width: "100%",
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: Colors.boder,
+  },
+  ratingInput: {
+    marginTop: 18,
+    marginBottom: -20,
+    width: "100%",
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: Colors.boder,
+  },
+  flexButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.accent,
+  },
+  flexCancelButton: {
+    backgroundColor: Colors.surface,
   },
   textArea: {
     height: 120,
     textAlignVertical: "top",
     paddingTop: 18,
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: Colors.boder,
   },
   divider: {
     height: 1,
@@ -374,6 +429,8 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 10,
     alignItems: "center",
+    borderColor: Colors.boder,
+    borderWidth: 1,
   },
   datePickerText: {
     color: Colors.textSecondary,
