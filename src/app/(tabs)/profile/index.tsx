@@ -120,7 +120,7 @@ export default function ProfileScreen() {
           setIsLoading(true);
           try {
             await UserService.deleteUser(user.id);
-            await signOut();
+            signOut();
             router.replace("/(auth)/login");
           } catch (error: any) {
             Alert.alert("Erro ao excluir", error.message);
@@ -185,7 +185,7 @@ export default function ProfileScreen() {
 
         {errors?.general && <Text style={[styles.error, styles.generalError]}>{errors.general}</Text>}
 
-        <View style={styles.buttonContainer}>
+        <View style={isViewing ? styles.buttonContainer : styles.flexButtonContainer}>
           {isViewing && (
             <>
               <StyledButton title="Trocar senha" variant="secondary" onPress={() => setViewMode("CHANGE_PASSWORD")} />
@@ -206,13 +206,13 @@ export default function ProfileScreen() {
                 variant="secondary"
                 onPress={handleBack}
                 disabled={isLoading}
-                style={styles.buttonFlex}
+                style={[styles.flexButton, styles.flexCancelButton]}
               />
               <StyledButton
                 title={isLoading ? "Salvando..." : "Salvar"}
                 onPress={isEditingProfile ? handleSaveProfile : handleSavePassword}
                 disabled={isLoading}
-                style={styles.buttonFlex}
+                style={styles.flexButton}
               />
             </>
           )}
@@ -240,16 +240,33 @@ const styles = StyleSheet.create({
     marginTop: 24,
     gap: 10,
   },
-  buttonFlex: {
-    flex: 1,
+  flexButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "47.7%",
+    gap: 20,
   },
   deleteButton: {
-    backgroundColor: Colors.card,
-    borderColor: "#FF453A",
-    borderWidth: 1,
+    backgroundColor: "#FF453A",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 150,
+    marginTop: 8,
   },
-  deleteButtonText: {
-    color: "#FF453A",
+  flexButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.accent,
+  },
+  flexCancelButton: {
+    backgroundColor: Colors.surface,
   },
   divider: {
     height: 1,
