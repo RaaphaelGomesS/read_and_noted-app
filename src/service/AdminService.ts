@@ -79,10 +79,13 @@ export const deactivateTemplate = async (id: number): Promise<void> => {
 export const updateTemplate = async (templateData: BookTemplateRequest, imageUri?: string): Promise<BookTemplate> => {
   try {
     const formData = new FormData();
-    const templateBlob = new Blob([JSON.stringify(templateData)], {
+
+    // @ts-ignore
+    formData.append("template", {
+      string: JSON.stringify(templateData),
       type: "application/json",
+      name: "template.json",
     });
-    formData.append("template", templateBlob);
 
     if (imageUri && !imageUri.startsWith("http")) {
       const file = {

@@ -43,12 +43,20 @@ export default function BookFormScreen() {
   const [rating, setRating] = useState("");
   const [startedAt, setStartedAt] = useState<Date | null>(null);
   const [finishedAt, setFinishedAt] = useState<Date | null>(null);
+
+  const [isPopulated, setIsPopulated] = useState(false);
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showFinishDatePicker, setShowFinishDatePicker] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const placeholdColor = isTemplateFieldsDisabled ? Colors.inactive : Colors.textSecondary;
+
   useEffect(() => {
+    if (isPopulated) {
+      return;
+    }
+
     if (params.template) {
       const parsedTemplate = JSON.parse(params.template) as BookTemplate;
       setTemplate(parsedTemplate);
@@ -64,6 +72,8 @@ export default function BookFormScreen() {
       setEdition(parsedTemplate.edition || "");
       setCategories(parsedTemplate.categories?.join(", ") || "");
       setImageUri(parsedTemplate.img || null);
+
+      setIsPopulated(true);
     } else if (params.externalBook) {
       const externalData = JSON.parse(params.externalBook) as ExternalBookData;
 
@@ -80,6 +90,10 @@ export default function BookFormScreen() {
       setEdition(externalData.edition || "");
       setCategories(externalData.categories?.join(", ") || "");
       setImageUri(externalData.img || null);
+
+      setIsPopulated(true);
+    } else {
+      setIsPopulated(true);
     }
   }, [params.template, params.externalBook]);
 
@@ -112,6 +126,8 @@ export default function BookFormScreen() {
     }
 
     setIsLoading(true);
+
+    const localImageUri = imageUri && !imageUri.startsWith("http") ? imageUri : undefined;
 
     const templateRequest: BookTemplateRequest =
       isTemplateFieldsDisabled && template
@@ -147,8 +163,8 @@ export default function BookFormScreen() {
     };
 
     try {
-      await BookService.createBook(createRequest, imageUri || undefined);
-      router.back();
+      await BookService.createBook(createRequest, localImageUri);
+      router.push("/(tabs)/books/reading");
     } catch (error: any) {
       Alert.alert("Erro ao salvar", error.message);
     } finally {
@@ -180,10 +196,23 @@ export default function BookFormScreen() {
           )}
         </TouchableOpacity>
 
-        <Input placeholder="Título" value={title} onChangeText={setTitle} editable={!isTemplateFieldsDisabled} />
-        <Input placeholder="Autor" value={author} onChangeText={setAuthor} editable={!isTemplateFieldsDisabled} />
+        <Input
+          placeholder="Título"
+          value={title}
+          placeholderTextColor={placeholdColor}
+          onChangeText={setTitle}
+          editable={!isTemplateFieldsDisabled}
+        />
+        <Input
+          placeholder="Autor"
+          value={author}
+          placeholderTextColor={placeholdColor}
+          onChangeText={setAuthor}
+          editable={!isTemplateFieldsDisabled}
+        />
         <Input
           placeholder="ISBN"
+          placeholderTextColor={placeholdColor}
           value={isbn}
           onChangeText={setIsbn}
           keyboardType="number-pad"
@@ -192,48 +221,54 @@ export default function BookFormScreen() {
         <View style={styles.inputRow}>
           <Input
             placeholder="Editora"
+            placeholderTextColor={placeholdColor}
             value={publisher}
             onChangeText={setPublisher}
-            style={styles.flexInput}
+            style={[styles.flexInput, !isTemplateFieldsDisabled && styles.enableInput]}
             editable={!isTemplateFieldsDisabled}
           />
           <Input
             placeholder="Edição"
             value={edition}
+            placeholderTextColor={placeholdColor}
             onChangeText={setEdition}
-            style={styles.flexInput}
+            style={[styles.flexInput, !isTemplateFieldsDisabled && styles.enableInput]}
             editable={!isTemplateFieldsDisabled}
           />
         </View>
         <View style={styles.inputRow}>
           <Input
             placeholder="Páginas totais"
+            placeholderTextColor={placeholdColor}
             value={totalPages}
             onChangeText={setTotalPages}
             keyboardType="number-pad"
-            style={styles.flexInput}
+            style={[styles.flexInput, !isTemplateFieldsDisabled && styles.enableInput]}
             editable={!isTemplateFieldsDisabled}
           />
           <Input
             placeholder="Ano de publicação"
+            placeholderTextColor={placeholdColor}
             value={year}
             onChangeText={setYear}
             keyboardType="number-pad"
-            style={styles.flexInput}
+            style={[styles.flexInput, !isTemplateFieldsDisabled && styles.enableInput]}
             editable={!isTemplateFieldsDisabled}
           />
         </View>
 
         <Input
           placeholder="Descrição"
+          placeholderTextColor={placeholdColor}
           value={description}
           onChangeText={setDescription}
           multiline
-          style={styles.textArea}
+          style={[styles.textArea, !isTemplateFieldsDisabled && styles.enableInput]}
           editable={!isTemplateFieldsDisabled}
         />
         <Input
           placeholder="Categorias (separadas por vírgula)"
+          placeholderTextColor={placeholdColor}
           value={categories}
           onChangeText={setCategories}
           editable={!isTemplateFieldsDisabled}
@@ -361,13 +396,11 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: "100%",
     backgroundColor: Colors.card,
-    color: Colors.text,
+    color: Colors.inactive,
     paddingHorizontal: 16,
     paddingVertical: 18,
     borderRadius: 10,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: Colors.boder,
+    fontSize: 16
   },
   ratingInput: {
     marginTop: 18,
@@ -399,11 +432,14 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     paddingTop: 18,
     backgroundColor: Colors.card,
-    color: Colors.text,
+    color: Colors.inactive,
     paddingHorizontal: 16,
     paddingVertical: 18,
     borderRadius: 10,
     fontSize: 16,
+  },
+  enableInput: {
+    color: Colors.text,
     borderWidth: 1,
     borderColor: Colors.boder,
   },

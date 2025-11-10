@@ -91,11 +91,12 @@ export const createBook = async (request: BookTypes.BookCreateRequest, imageUri?
   try {
     const formData = new FormData();
 
-    const bookBlob = new Blob([JSON.stringify(request)], {
+    //@ts-ignore
+    formData.append("book", {
+      string: JSON.stringify(request),
       type: "application/json",
+      name: "book.json",
     });
-
-    formData.append("book", bookBlob);
 
     if (imageUri && !imageUri.startsWith("http")) {
       const uriParts = imageUri.split(".");
@@ -119,7 +120,7 @@ export const createBook = async (request: BookTypes.BookCreateRequest, imageUri?
 
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw HandlerError.handleApiError(error, "Não foi possível criar o livro.");
   }
 };
@@ -127,11 +128,13 @@ export const createBook = async (request: BookTypes.BookCreateRequest, imageUri?
 export const createSuggestion = async (request: SuggestionRequest, imageUri?: string) => {
   try {
     const formData = new FormData();
-    
-    const suggestionBlob = new Blob([JSON.stringify(request)], {
+
+    //@ts-ignore
+    formData.append("suggestion", {
+      string: JSON.stringify(request),
       type: "application/json",
+      name: "suggestion.json",
     });
-    formData.append("suggestion", suggestionBlob);
 
     if (imageUri && !imageUri.startsWith("http")) {
       const uriParts = imageUri.split(".");

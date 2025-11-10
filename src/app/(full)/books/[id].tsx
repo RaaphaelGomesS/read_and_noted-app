@@ -185,18 +185,42 @@ export default function BookDetailScreen() {
           )}
         </View>
 
-        <Input placeholder="Título" value={title} editable={false} />
-        <Input placeholder="Autor" value={author} editable={false} />
-        <Input placeholder="ISBN" value={isbn} editable={false} />
+        <Input placeholder="Título" value={title} editable={false} placeholderTextColor={Colors.inactive} />
+        <Input placeholder="Autor" value={author} editable={false} placeholderTextColor={Colors.inactive} />
+        <Input placeholder="ISBN" value={isbn} editable={false} placeholderTextColor={Colors.inactive} />
 
         <View style={styles.inputRow}>
-          <Input placeholder="Editora" value={publisher} style={styles.flexInput} editable={false} />
-          <Input placeholder="Edição" value={edition} style={styles.flexInput} editable={false} />
+          <Input
+            placeholder="Editora"
+            value={publisher}
+            style={styles.flexInput}
+            editable={false}
+            placeholderTextColor={Colors.inactive}
+          />
+          <Input
+            placeholder="Edição"
+            value={edition}
+            style={styles.flexInput}
+            editable={false}
+            placeholderTextColor={Colors.inactive}
+          />
         </View>
 
         <View style={styles.inputRow}>
-          <Input placeholder="Páginas totais" value={totalPages} style={styles.flexInput} editable={false} />
-          <Input placeholder="Ano" value={year} style={styles.flexInput} editable={false} />
+          <Input
+            placeholder="Páginas totais"
+            value={totalPages}
+            style={styles.flexInput}
+            editable={false}
+            placeholderTextColor={Colors.inactive}
+          />
+          <Input
+            placeholder="Ano"
+            value={year}
+            style={styles.flexInput}
+            editable={false}
+            placeholderTextColor={Colors.inactive}
+          />
         </View>
 
         <Input
@@ -207,7 +231,7 @@ export default function BookDetailScreen() {
           style={styles.textArea}
           editable={false}
         />
-        <Input placeholder="Categorias" value={categories} editable={false} />
+        <Input placeholder="Categorias" value={categories} editable={false} placeholderTextColor={Colors.inactive} />
 
         <View style={styles.divider} />
 

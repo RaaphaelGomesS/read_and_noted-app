@@ -126,9 +126,16 @@ export default function TemplateFormScreen() {
 
         <Input placeholder="Título" value={title} onChangeText={setTitle} />
         <Input placeholder="Autor" value={author} onChangeText={setAuthor} />
-        <View style={styles.row}>
+        <Input placeholder="ISBN" value={isbn} onChangeText={setIsbn} keyboardType="number-pad" />
+
+        <View style={styles.inputRow}>
+          <Input placeholder="Editora" value={publisher} onChangeText={setPublisher} style={styles.flexInput} />
+          <Input placeholder="Edição" value={edition} onChangeText={setEdition} style={styles.flexInput} />
+        </View>
+
+        <View style={styles.inputRow}>
           <Input
-            placeholder="Páginas Totais"
+            placeholder="Páginas totais"
             value={totalPages}
             onChangeText={setTotalPages}
             keyboardType="number-pad"
@@ -142,17 +149,7 @@ export default function TemplateFormScreen() {
             style={styles.flexInput}
           />
         </View>
-        <Input placeholder="Editora" value={publisher} onChangeText={setPublisher} />
-        <View style={styles.row}>
-          <Input
-            placeholder="ISBN"
-            value={isbn}
-            onChangeText={setIsbn}
-            keyboardType="number-pad"
-            style={styles.flexInput}
-          />
-          <Input placeholder="Edição" value={edition} onChangeText={setEdition} style={styles.flexInput} />
-        </View>
+
         <Input
           placeholder="Descrição"
           value={description}
@@ -162,9 +159,14 @@ export default function TemplateFormScreen() {
         />
         <Input placeholder="Categorias (separadas por vírgula)" value={categories} onChangeText={setCategories} />
 
-        <View style={[styles.row, { marginTop: 20 }]}>
-          <StyledButton title="Cancelar" variant="secondary" onPress={() => router.back()} style={styles.flexInput} />
-          <StyledButton title="Salvar Alterações" onPress={handleSave} style={styles.flexInput} loading={isLoading} />
+        <View style={[styles.inputRow, { marginTop: 20 }]}>
+          <StyledButton
+            title="Cancelar"
+            variant="secondary"
+            onPress={() => router.back()}
+            style={[styles.flexButton, styles.flexCancelButton]}
+          />
+          <StyledButton title="Salvar Alterações" onPress={handleSave} style={styles.flexButton} loading={isLoading} />
         </View>
       </ScrollView>
     </View>
@@ -205,18 +207,48 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  row: {
+  inputRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 10,
+    width: "47.7%",
+    gap: 20,
   },
   flexInput: {
     flex: 1,
     marginBottom: 0,
+    width: "100%",
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: Colors.boder,
   },
   textArea: {
     height: 120,
     textAlignVertical: "top",
     paddingTop: 18,
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: Colors.boder,
+  },
+  flexButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.accent,
+  },
+  flexCancelButton: {
+    backgroundColor: Colors.surface,
   },
 });
