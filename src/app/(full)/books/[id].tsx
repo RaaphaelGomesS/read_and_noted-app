@@ -98,7 +98,7 @@ export default function BookDetailScreen() {
       libraryId: book.libraryId,
       status: status,
       pages: parseInt(readPages, 10) || 0,
-      rating: parseInt(rating, 10) || 0,
+      rating: parseFloat(rating.replace(",", ".")) || 0,
       startedDate: startedAt ? startedAt.toISOString() : null,
       finishedDate: finishedAt ? finishedAt.toISOString() : null,
     };
@@ -272,15 +272,14 @@ export default function BookDetailScreen() {
 
         {status === "finalizado" && (
           <Input
-            placeholder="Avaliação (1-5)"
+            placeholder="Avaliação (0.5 - 5)"
             value={rating}
             onChangeText={setRating}
-            keyboardType="number-pad"
+            keyboardType="numeric"
             style={styles.ratingInput}
-            maxLength={1}
+            maxLength={3}
           />
         )}
-
         <View style={[styles.inputRow, { marginTop: 20 }]}>
           <StyledButton
             title="Cancelar"

@@ -11,6 +11,20 @@ type BookCardProps = {
   onEditPress?: () => void;
 };
 
+const StarDisplay = ({ rating }: { rating: number }) => {
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    let iconName: "star" | "star-half" | "star-outline" = "star-outline";
+    if (rating >= i) {
+      iconName = "star";
+    } else if (rating >= i - 0.5) {
+      iconName = "star-half";
+    }
+    stars.push(<Ionicons name={iconName} size={18} color={Colors.accent} key={i} />);
+  }
+  return <View style={styles.starContainer}>{stars}</View>;
+};
+
 const BookCard = ({ book, status, onPress, onEditPress }: BookCardProps) => {
   const progress = book.totalPages > 0 ? (book.readPages / book.totalPages) * 100 : 0;
 
@@ -20,6 +34,7 @@ const BookCard = ({ book, status, onPress, onEditPress }: BookCardProps) => {
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{book.title}</Text>
         <Text style={styles.author}>{book.author}</Text>
+
         {status === "lendo" && (
           <View style={styles.progressWrapper}>
             <View style={styles.progressBarBackground}>
@@ -28,6 +43,8 @@ const BookCard = ({ book, status, onPress, onEditPress }: BookCardProps) => {
             <Text style={styles.progressText}>{Math.floor(progress)}%</Text>
           </View>
         )}
+
+        {status === "finalizado" && book.rating != null && book.rating > 0 && <StarDisplay rating={book.rating} />}
       </View>
       {status === "lendo" && (
         <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
@@ -101,6 +118,10 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
     padding: 4,
+  },
+  starContainer: {
+    flexDirection: "row",
+    marginTop: 16,
   },
 });
 

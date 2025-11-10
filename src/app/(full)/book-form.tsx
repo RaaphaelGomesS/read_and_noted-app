@@ -152,7 +152,7 @@ export default function BookFormScreen() {
       libraryId: libId,
       status: status,
       pages: parseInt(readPages, 10) || 0,
-      rating: parseInt(rating, 10) || 0,
+      rating: parseFloat(rating.replace(",", ".")) || 0,
       startedDate: startedAt ? startedAt.toISOString() : null,
       finishedDate: finishedAt ? finishedAt.toISOString() : null,
     };
@@ -191,7 +191,7 @@ export default function BookFormScreen() {
           ) : (
             <View style={styles.coverPlaceholder}>
               <Ionicons name="image-outline" size={50} color={Colors.textSecondary} />
-              <Text style={styles.coverPlaceholderText}>Adicionar Capa</Text>
+              <Text style={styles.coverPlaceholderText}>Adicionar capa</Text>
             </View>
           )}
         </TouchableOpacity>
@@ -313,12 +313,12 @@ export default function BookFormScreen() {
 
         {status === "finalizado" && (
           <Input
-            placeholder="Avaliação (1-5)"
+            placeholder="Avaliação (0.5 - 5)"
             value={rating}
             onChangeText={setRating}
-            keyboardType="number-pad"
+            keyboardType="numeric"
             style={styles.ratingInput}
-            maxLength={1}
+            maxLength={3}
           />
         )}
 
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 18,
     borderRadius: 10,
-    fontSize: 16
+    fontSize: 16,
   },
   ratingInput: {
     marginTop: 18,
