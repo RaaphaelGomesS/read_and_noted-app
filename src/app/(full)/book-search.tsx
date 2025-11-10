@@ -17,12 +17,6 @@ const FILTER_OPTIONS: OptionItem[] = [
   { label: "Buscar por ISBN", value: "ISBN" },
 ];
 
-const FILTER_LABELS: Record<FilterType, string> = {
-  title: "Buscar por título",
-  author: "Buscar por autor",
-  ISBN: "Buscar por ISBN",
-};
-
 export default function BookSearchScreen() {
   const router = useRouter();
   const { libraryId } = useLocalSearchParams<{ libraryId: string }>();
@@ -208,13 +202,13 @@ const styles = StyleSheet.create({
   emptyContainer: {
     alignItems: "center",
     paddingHorizontal: 32,
-    marginTop: 50,
+    marginTop: 30,
   },
   emptyText: {
     color: Colors.textSecondary,
     textAlign: "center",
     fontSize: 16,
-    marginTop: 15,
+    margin: 15,
   },
   emptySubtitle: {
     color: Colors.text,

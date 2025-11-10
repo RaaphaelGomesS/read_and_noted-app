@@ -112,7 +112,7 @@ export default function NoteDetailScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert("Confirmar Exclusão", `Tem certeza que deseja excluir a anotação "${note?.title}"?`, [
+    Alert.alert("Confirmar exclusão", `Tem certeza que deseja excluir a anotação "${note?.title}"?`, [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
@@ -130,7 +130,7 @@ export default function NoteDetailScreen() {
   };
 
   const topMenuOptions = [
-    { label: isEditingText ? "Salvar e Visualizar" : "Editar Corpo", onPress: handleToggleEditMode },
+    { label: isEditingText ? "Salvar e visualizar" : "Editar corpo", onPress: handleToggleEditMode },
     { label: "Excluir Anotação", onPress: handleDelete, isDestructive: true },
   ];
 

@@ -143,7 +143,7 @@ export default function ExternalBookSearchScreen() {
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         options={SEARCH_OPTIONS}
-        title="Selecione o Modo de Busca"
+        title="Selecione o modo de busca"
         currentValue={searchMode}
         onSelect={(value) => {
           setSearchMode(value as SearchMode);

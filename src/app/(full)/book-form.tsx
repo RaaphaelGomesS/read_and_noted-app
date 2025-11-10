@@ -1,4 +1,5 @@
-import { BookCreateRequest, BookRequest } from "@/@types/book.types";
+import { BookCreateRequest, BookRequest, BookStatus } from "@/@types/book.types";
+import { ExternalBookData } from "@/@types/externalBook.types";
 import { BookTemplate, BookTemplateRequest } from "@/@types/template.types";
 import { StyledButton } from "@/components/button";
 import Input from "@/components/input";
@@ -11,18 +12,17 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type BookStatus = "WANT_TO_READ" | "READING" | "READ" | "DROPPED";
 const statusDisplayMap: Record<BookStatus, string> = {
-  WANT_TO_READ: "Aguardando",
-  READING: "Lendo",
-  READ: "Finalizado",
-  DROPPED: "Parado",
+  aguardando: "Aguardando",
+  lendo: "Lendo",
+  finalizado: "Finalizado",
+  parado: "Parado",
 };
 
 export default function BookFormScreen() {
   const router = useRouter();
 
-  const params = useLocalSearchParams<{ libraryId: string; template?: string }>();
+  const params = useLocalSearchParams<{ libraryId: string; template?: string; externalBook?: string }>();
 
   const [template, setTemplate] = useState<BookTemplate | null>(null);
   const [isTemplateFieldsDisabled, setIsTemplateFieldsDisabled] = useState(false);
@@ -38,7 +38,7 @@ export default function BookFormScreen() {
   const [categories, setCategories] = useState("");
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  const [status, setStatus] = useState<BookStatus>("WANT_TO_READ");
+  const [status, setStatus] = useState<BookStatus>("aguardando");
   const [readPages, setReadPages] = useState("");
   const [rating, setRating] = useState("");
   const [startedAt, setStartedAt] = useState<Date | null>(null);
@@ -64,8 +64,24 @@ export default function BookFormScreen() {
       setEdition(parsedTemplate.edition || "");
       setCategories(parsedTemplate.categories?.join(", ") || "");
       setImageUri(parsedTemplate.img || null);
+    } else if (params.externalBook) {
+      const externalData = JSON.parse(params.externalBook) as ExternalBookData;
+
+      setIsTemplateFieldsDisabled(false);
+      setTemplate(null);
+
+      setTitle(externalData.title);
+      setAuthor(externalData.author);
+      setTotalPages(String(externalData.pages || ""));
+      setYear(String(externalData.year || ""));
+      setDescription(externalData.description || "");
+      setIsbn(externalData.isbn || "");
+      setPublisher(externalData.publisher || "");
+      setEdition(externalData.edition || "");
+      setCategories(externalData.categories?.join(", ") || "");
+      setImageUri(externalData.img || null);
     }
-  }, [params.template]);
+  }, [params.template, params.externalBook]);
 
   const handleImagePick = async () => {
     if (isTemplateFieldsDisabled) {
@@ -113,6 +129,7 @@ export default function BookFormScreen() {
               .split(",")
               .map((s) => s.trim())
               .filter(Boolean),
+            imgUrl: imageUri && imageUri.startsWith("http") ? imageUri : undefined,
           };
 
     const bookRequest: BookRequest = {
@@ -239,7 +256,9 @@ export default function BookFormScreen() {
           ))}
         </View>
 
-        <Input placeholder="Páginas lidas" value={readPages} onChangeText={setReadPages} keyboardType="number-pad" />
+        {status === "lendo" && (
+          <Input placeholder="Páginas lidas" value={readPages} onChangeText={setReadPages} keyboardType="number-pad" />
+        )}
 
         <View style={styles.row}>
           <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowStartDatePicker(true)}>
@@ -248,7 +267,7 @@ export default function BookFormScreen() {
             </Text>
           </TouchableOpacity>
 
-          {status === "READ" && (
+          {status === "finalizado" && (
             <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowFinishDatePicker(true)}>
               <Text style={styles.datePickerText}>
                 {finishedAt ? `Término: ${finishedAt.toLocaleDateString()}` : "Data de término"}
@@ -257,7 +276,7 @@ export default function BookFormScreen() {
           )}
         </View>
 
-        {status === "READ" && (
+        {status === "finalizado" && (
           <Input
             placeholder="Avaliação (1-5)"
             value={rating}

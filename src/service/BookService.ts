@@ -119,6 +119,7 @@ export const createBook = async (request: BookTypes.BookCreateRequest, imageUri?
 
     return response.data;
   } catch (error) {
+    console.log(error)
     throw HandlerError.handleApiError(error, "Não foi possível criar o livro.");
   }
 };

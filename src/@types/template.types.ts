@@ -40,4 +40,5 @@ export type BookTemplateRequest = {
   year?: number;
   pages?: number;
   categories?: string[];
+  imgUrl?: string;
 };
