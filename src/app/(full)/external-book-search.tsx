@@ -21,12 +21,12 @@ export default function ExternalBookSearchScreen() {
   const router = useRouter();
   const { libraryId } = useLocalSearchParams<{ libraryId: string }>();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<ExternalBookSearchResult[]>([]);
   const [searchText, setSearchText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isScannerVisible, setIsScannerVisible] = useState(false);
   const [searchMode, setSearchMode] = useState<SearchMode>("title");
+  const [results, setResults] = useState<ExternalBookSearchResult[]>([]);
 
   const handleSearch = async (textToSearch: string = searchText) => {
     if (!textToSearch.trim()) return;
@@ -49,12 +49,29 @@ export default function ExternalBookSearchScreen() {
     }
   };
 
-  const handleSelectBook = (bookData: ExternalBookData) => {
-    router.replace({
-      pathname: "/(full)/book-form",
+  const handleSelectBook = async (itemRawData: any) => {
+    if (searchMode === "isbn") {
+      router.replace({
+        pathname: "/(full)/book-form",
+        params: {
+          libraryId: libraryId,
+          externalBook: JSON.stringify(itemRawData as ExternalBookData),
+        },
+      });
+      return;
+    }
+
+    const workKey = itemRawData.workKey;
+    if (!workKey) {
+      Alert.alert("Erro", "Não foi possível encontrar o identificador desta obra.");
+      return;
+    }
+
+    router.push({
+      pathname: "/(full)/select-edition",
       params: {
+        workKey: workKey,
         libraryId: libraryId,
-        externalBook: JSON.stringify(bookData),
       },
     });
   };
@@ -205,7 +222,7 @@ const styles = StyleSheet.create({
   emptyText: {
     color: Colors.textSecondary,
     textAlign: "center",
-    marginTop: 50,
+    margin: 20,
     fontSize: 16,
   },
 });

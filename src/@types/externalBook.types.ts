@@ -18,3 +18,11 @@ export type ExternalBookSearchResult = {
   img?: string;
   raw: ExternalBookData;
 };
+
+export type EditionResult = {
+  key: string;
+  title: string;
+  publish_date?: string;
+  publishers?: string[];
+  cover_i?: number;
+};

@@ -50,6 +50,16 @@ function AuthGuard() {
         />
 
         <Stack.Screen
+          name="(full)/select-edition"
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: Colors.background },
+            headerTintColor: Colors.text,
+            headerTitle: "Selecione uma edição",
+          }}
+        />
+
+        <Stack.Screen
           name="(full)/notes/[id]"
           options={{
             headerShown: true,
