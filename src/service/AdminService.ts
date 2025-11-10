@@ -1,10 +1,5 @@
-import {
-    BookTemplate,
-    BookTemplatePageDTO,
-    BookTemplateRequest,
-    SuggestionDetails,
-    SuggestionPageDTO,
-} from "@/@types/auth.types";
+import { SuggestionDetails, SuggestionPageDTO } from "@/@types/suggestion.type";
+import { BookTemplate, BookTemplatePageDTO, BookTemplateRequest } from "@/@types/template.types";
 import * as HandlerError from "@/service/HandlerApiException";
 import { Platform } from "react-native";
 import api from "./ConnectionApi";
@@ -84,7 +79,10 @@ export const deactivateTemplate = async (id: number): Promise<void> => {
 export const updateTemplate = async (templateData: BookTemplateRequest, imageUri?: string): Promise<BookTemplate> => {
   try {
     const formData = new FormData();
-    formData.append("template", JSON.stringify(templateData));
+    const templateBlob = new Blob([JSON.stringify(templateData)], {
+      type: "application/json",
+    });
+    formData.append("template", templateBlob);
 
     if (imageUri && !imageUri.startsWith("http")) {
       const file = {

@@ -91,7 +91,11 @@ export const createBook = async (request: BookTypes.BookCreateRequest, imageUri?
   try {
     const formData = new FormData();
 
-    formData.append("book", JSON.stringify(request));
+    const bookBlob = new Blob([JSON.stringify(request)], {
+      type: "application/json",
+    });
+
+    formData.append("book", bookBlob);
 
     if (imageUri && !imageUri.startsWith("http")) {
       const uriParts = imageUri.split(".");
@@ -122,7 +126,11 @@ export const createBook = async (request: BookTypes.BookCreateRequest, imageUri?
 export const createSuggestion = async (request: SuggestionRequest, imageUri?: string) => {
   try {
     const formData = new FormData();
-    formData.append("suggestion", JSON.stringify(request));
+    
+    const suggestionBlob = new Blob([JSON.stringify(request)], {
+      type: "application/json",
+    });
+    formData.append("suggestion", suggestionBlob);
 
     if (imageUri && !imageUri.startsWith("http")) {
       const uriParts = imageUri.split(".");

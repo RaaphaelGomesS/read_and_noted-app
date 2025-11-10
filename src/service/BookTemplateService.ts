@@ -1,4 +1,4 @@
-import { BookTemplatePageDTO, BookTemplateSearchFilter } from "@/@types/auth.types";
+import { BookTemplatePageDTO, BookTemplateSearchFilter } from "@/@types/template.types";
 import * as HandlerError from "@/service/HandlerApiException";
 import api from "./ConnectionApi";
 
