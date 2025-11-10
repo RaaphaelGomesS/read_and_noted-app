@@ -46,6 +46,18 @@ export const getBookById = async (id: number): Promise<BookTypes.FullBookRespons
   }
 };
 
+export const changeBookLibrary = async (bookId: number, libraryId: number): Promise<BookTypes.BookResponse> => {
+  try {
+    const response = await api.post<BookTypes.BookResponse>("/book/update/library", {
+      bookId,
+      libraryId,
+    });
+    return response.data;
+  } catch (error) {
+    throw HandlerError.handleApiError(error, "Não foi possível mover o livro.");
+  }
+};
+
 export const updateBook = async (data: BookTypes.BookRequest): Promise<BookTypes.BookResponse> => {
   try {
     const response = await api.put<BookTypes.BookResponse>("/book/", data);

@@ -118,6 +118,18 @@ export default function BookFormScreen() {
     }
   };
 
+  const handleMoveBook = async (existingBookId: number, newLibraryId: number) => {
+    setIsLoading(true);
+    try {
+      await BookService.changeBookLibrary(existingBookId, newLibraryId);
+      Alert.alert("Sucesso", "O livro foi movido para a nova biblioteca.");
+      router.push("/(tabs)/books/reading");
+    } catch (error: any) {
+      Alert.alert("Erro ao mover", error.message);
+      setIsLoading(false);
+    }
+  };
+
   const handleSave = async () => {
     const libId = parseInt(params.libraryId, 10);
     if (!libId || !title || !author) {
@@ -166,9 +178,27 @@ export default function BookFormScreen() {
       await BookService.createBook(createRequest, localImageUri);
       router.push("/(tabs)/books/reading");
     } catch (error: any) {
-      Alert.alert("Erro ao salvar", error.message);
-    } finally {
-      setIsLoading(false);
+      if (error.message && error.message.startsWith("ALREADY_EXISTS|")) {
+        const [, bookIdStr, oldLibraryName] = error.message.split("|");
+        const existingBookId = parseInt(bookIdStr, 10);
+        const newLibraryId = parseInt(params.libraryId, 10);
+
+        Alert.alert(
+          "Livro já existente",
+          `Você já possui "${title}" na biblioteca "${oldLibraryName}". Deseja movê-lo para esta biblioteca?`,
+          [
+            { text: "Cancelar", style: "cancel", onPress: () => setIsLoading(false) },
+            {
+              text: "Mover",
+              style: "default",
+              onPress: () => handleMoveBook(existingBookId, newLibraryId),
+            },
+          ]
+        );
+      } else {
+        Alert.alert("Erro ao salvar", error.message);
+        setIsLoading(false);
+      }
     }
   };
 

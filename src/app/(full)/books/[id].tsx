@@ -1,9 +1,12 @@
 import { BookRequest, BookStatus, FullBookResponse } from "@/@types/book.types";
+import { Library } from "@/@types/library.types";
 import { StyledButton } from "@/components/button";
 import Input from "@/components/input";
 import OptionsModal from "@/components/optionsModal";
+import SimpleSelectModal, { OptionItem } from "@/components/simpleSelectModal";
 import { Colors } from "@/constants/Colors";
 import * as BookService from "@/service/BookService";
+import * as LibraryService from "@/service/LibraryService";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -48,6 +51,9 @@ export default function BookDetailScreen() {
   const [isFetching, setIsFetching] = useState(true);
   const [isOptionsModalVisible, setOptionsModalVisible] = useState(false);
 
+  const [isMoveModalVisible, setMoveModalVisible] = useState(false);
+  const [allLibrariesOptions, setAllLibrariesOptions] = useState<OptionItem[]>([]);
+
   useEffect(() => {
     if (!bookId) {
       Alert.alert("Erro", "ID do livro não encontrado.");
@@ -87,6 +93,16 @@ export default function BookDetailScreen() {
         router.back();
       })
       .finally(() => setIsFetching(false));
+
+    LibraryService.getAllLibraries(0, 50)
+      .then((data) => {
+        const options = data.libraries.map((lib: Library) => ({
+          label: lib.name,
+          value: String(lib.id),
+        }));
+        setAllLibrariesOptions(options);
+      })
+      .catch((err) => console.error("Falha ao buscar bibliotecas:", err.message));
   }, [bookId]);
 
   const handleSave = async () => {
@@ -140,7 +156,25 @@ export default function BookDetailScreen() {
     });
   };
 
+  const handleMoveLibrarySelect = async (newLibraryIdStr: string) => {
+    const newLibraryId = parseInt(newLibraryIdStr, 10);
+    if (!book || newLibraryId === book.libraryId) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await BookService.changeBookLibrary(book.id, newLibraryId);
+      Alert.alert("Sucesso", "Livro movido.", [{ text: "OK", onPress: () => router.back() }]);
+    } catch (error: any) {
+      Alert.alert("Erro ao mover", error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const modalOptions = [
+    { label: "Mover de biblioteca", onPress: () => setMoveModalVisible(true) },
     { label: "Criar sugestão de melhoria", onPress: handleSuggest },
     { label: "Excluir livro da biblioteca", onPress: handleDelete, isDestructive: true },
   ];
@@ -308,6 +342,17 @@ export default function BookDetailScreen() {
         onClose={() => setOptionsModalVisible(false)}
         options={modalOptions}
       />
+
+      {book && (
+        <SimpleSelectModal
+          visible={isMoveModalVisible}
+          onClose={() => setMoveModalVisible(false)}
+          onSelect={handleMoveLibrarySelect}
+          options={allLibrariesOptions.filter((lib) => parseInt(lib.value, 10) !== book.libraryId)}
+          title="Mover para..."
+          currentValue={String(book.libraryId)}
+        />
+      )}
     </View>
   );
 }
