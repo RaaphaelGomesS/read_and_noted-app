@@ -2,6 +2,7 @@ import { Book, BookResponse } from "@/@types/book.types";
 import AddBookModal from "@/components/addBookModal";
 import BookCard from "@/components/bookCard";
 import EditPagesModal from "@/components/editPagesModal";
+import FinishBookModal from "@/components/finishBookModal";
 import FloatingActionButton from "@/components/floatingButton";
 import { Colors } from "@/constants/Colors";
 import { useLibrary } from "@/context/LibraryContext";
@@ -34,6 +35,7 @@ export default function LendoScreen() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isFinishModalVisible, setIsFinishModalVisible] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
@@ -93,12 +95,43 @@ export default function LendoScreen() {
     setSelectedBook(null);
   };
 
-  const handleSavePages = (pages: number) => {
+  const handleCloseFinishModal = () => {
+    setIsFinishModalVisible(false);
+    setSelectedBook(null);
+  };
+
+  const handleSavePages = async (pages: number) => {
     if (!selectedBook) return;
-    // TODO: Chamar a API POST /book/update
-    console.log(`Salvando livro ${selectedBook.id} com ${pages} páginas...`);
-    setBooks((currentBooks) => currentBooks.map((b) => (b.id === selectedBook.id ? { ...b, readPages: pages } : b)));
-    handleCloseModal();
+
+    if (pages === selectedBook.totalPages) {
+      setModalVisible(false);
+      setIsFinishModalVisible(true);
+      return;
+    }
+
+    try {
+      const updatedBook = await BookService.updateReadPages(selectedBook.id, pages);
+      setBooks((currentBooks) =>
+        currentBooks.map((b) => (b.id === selectedBook.id ? { ...b, readPages: updatedBook.pages } : b))
+      );
+      handleCloseModal();
+    } catch (error: any) {
+      Alert.alert("Erro ao Atualizar", error.message);
+    }
+  };
+
+  const handleFinishBook = async (rating: number) => {
+    if (!selectedBook) return;
+
+    try {
+      await BookService.finishBook(selectedBook.id, rating);
+
+      setBooks((currentBooks) => currentBooks.filter((b) => b.id !== selectedBook.id));
+
+      handleCloseFinishModal();
+    } catch (error: any) {
+      Alert.alert("Erro ao Finalizar", error.message);
+    }
   };
 
   const handleBookPress = (book: Book) => {
@@ -168,6 +201,15 @@ export default function LendoScreen() {
           bookTitle={selectedBook.title}
           currentPages={selectedBook.readPages}
           totalPages={selectedBook.totalPages}
+        />
+      )}
+
+      {selectedBook && (
+        <FinishBookModal
+          visible={isFinishModalVisible}
+          onClose={handleCloseFinishModal}
+          onSubmit={handleFinishBook}
+          bookTitle={selectedBook.title}
         />
       )}
     </View>

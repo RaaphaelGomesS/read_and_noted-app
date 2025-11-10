@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
 
   disabledInput: {
     backgroundColor: Colors.surface,
-    color: Colors.textSecondary,
+    color: Colors.inactive,
     borderColor: Colors.surface,
   },
 });

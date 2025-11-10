@@ -1,4 +1,4 @@
-import { BookRequest, FullBookResponse } from "@/@types/book.types";
+import { BookRequest, BookStatus, FullBookResponse } from "@/@types/book.types";
 import { StyledButton } from "@/components/button";
 import Input from "@/components/input";
 import OptionsModal from "@/components/optionsModal";
@@ -10,12 +10,11 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type BookStatus = "WANT_TO_READ" | "READING" | "READ" | "DROPPED";
 const statusDisplayMap: Record<BookStatus, string> = {
-  WANT_TO_READ: "Aguardando",
-  READING: "Lendo",
-  READ: "Finalizado",
-  DROPPED: "Parado",
+  aguardando: "Aguardando",
+  lendo: "Lendo",
+  finalizado: "Finalizado",
+  parado: "Parado",
 };
 
 export default function BookDetailScreen() {
@@ -25,9 +24,7 @@ export default function BookDetailScreen() {
 
   const [book, setBook] = useState<FullBookResponse["book"] | null>(null);
   const [template, setTemplate] = useState<FullBookResponse["template"] | null>(null);
-  const [isTemplateFieldsDisabled, setIsTemplateFieldsDisabled] = useState(true);
 
-  // Estados do Template
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [totalPages, setTotalPages] = useState("");
@@ -39,8 +36,7 @@ export default function BookDetailScreen() {
   const [categories, setCategories] = useState("");
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  // Estados do Livro
-  const [status, setStatus] = useState<BookStatus>("WANT_TO_READ");
+  const [status, setStatus] = useState<BookStatus>("aguardando");
   const [readPages, setReadPages] = useState("");
   const [rating, setRating] = useState("");
   const [startedAt, setStartedAt] = useState<Date | null>(null);
@@ -48,7 +44,6 @@ export default function BookDetailScreen() {
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showFinishDatePicker, setShowFinishDatePicker] = useState(false);
 
-  // Estados de controle
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [isOptionsModalVisible, setOptionsModalVisible] = useState(false);
@@ -81,8 +76,8 @@ export default function BookDetailScreen() {
         setImageUri(apiTemplate.img || null);
 
         //Livro
-        setStatus(apiBook.status.toUpperCase() as BookStatus);
-        setReadPages(String(apiBook.pages || 0));
+        setStatus(apiBook.status as BookStatus);
+        setReadPages(String(apiBook.pages || ""));
         setRating(String(apiBook.rating || ""));
         setStartedAt(apiBook.startedDate ? new Date(apiBook.startedDate) : null);
         setFinishedAt(apiBook.finishedDate ? new Date(apiBook.finishedDate) : null);
@@ -120,7 +115,7 @@ export default function BookDetailScreen() {
 
   const handleDelete = () => {
     if (!book) return;
-    Alert.alert("Confirmar Exclusão", `Tem certeza que deseja excluir "${book.title}" da sua biblioteca?`, [
+    Alert.alert("Confirmar exclusão", `Tem certeza que deseja excluir "${book.title}" da sua biblioteca?`, [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
@@ -130,7 +125,7 @@ export default function BookDetailScreen() {
             await BookService.deleteBook(book.id);
             router.back();
           } catch (error: any) {
-            Alert.alert("Erro ao Excluir", error.message);
+            Alert.alert("Erro ao excluir", error.message);
           }
         },
       },
@@ -171,7 +166,7 @@ export default function BookDetailScreen() {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          title: "Detalhes do Livro",
+          title: "Detalhes do livro",
           headerRight: () => (
             <TouchableOpacity onPress={() => setOptionsModalVisible(true)} style={{ padding: 8 }}>
               <Ionicons name="ellipsis-horizontal" size={24} color={Colors.text} />
@@ -190,34 +185,33 @@ export default function BookDetailScreen() {
           )}
         </View>
 
-        <Input placeholder="Título" value={title} editable={!isTemplateFieldsDisabled} />
-        <Input placeholder="Autor" value={author} editable={!isTemplateFieldsDisabled} />
-        <View style={styles.row}>
-          <Input
-            placeholder="Páginas Totais"
-            value={totalPages}
-            style={styles.flexInput}
-            editable={!isTemplateFieldsDisabled}
-          />
-          <Input placeholder="Ano" value={year} style={styles.flexInput} editable={!isTemplateFieldsDisabled} />
+        <Input placeholder="Título" value={title} editable={false} />
+        <Input placeholder="Autor" value={author} editable={false} />
+        <Input placeholder="ISBN" value={isbn} editable={false} />
+
+        <View style={styles.inputRow}>
+          <Input placeholder="Editora" value={publisher} style={styles.flexInput} editable={false} />
+          <Input placeholder="Edição" value={edition} style={styles.flexInput} editable={false} />
         </View>
-        <Input placeholder="Editora" value={publisher} editable={!isTemplateFieldsDisabled} />
-        <View style={styles.row}>
-          <Input placeholder="ISBN" value={isbn} style={styles.flexInput} editable={!isTemplateFieldsDisabled} />
-          <Input placeholder="Edição" value={edition} style={styles.flexInput} editable={!isTemplateFieldsDisabled} />
+
+        <View style={styles.inputRow}>
+          <Input placeholder="Páginas totais" value={totalPages} style={styles.flexInput} editable={false} />
+          <Input placeholder="Ano" value={year} style={styles.flexInput} editable={false} />
         </View>
+
         <Input
           placeholder="Descrição"
           value={description}
+          placeholderTextColor={Colors.inactive}
           multiline
           style={styles.textArea}
-          editable={!isTemplateFieldsDisabled}
+          editable={false}
         />
-        <Input placeholder="Categorias" value={categories} editable={!isTemplateFieldsDisabled} />
+        <Input placeholder="Categorias" value={categories} editable={false} />
 
         <View style={styles.divider} />
 
-        <Text style={styles.label}>Meu Progresso</Text>
+        <Text style={styles.label}>Meu progresso</Text>
         <View style={styles.statusContainer}>
           {(Object.keys(statusDisplayMap) as BookStatus[]).map((key) => (
             <TouchableOpacity
@@ -232,32 +226,45 @@ export default function BookDetailScreen() {
           ))}
         </View>
 
-        <Input placeholder="Páginas Lidas" value={readPages} onChangeText={setReadPages} keyboardType="number-pad" />
+        {status === "lendo" && (
+          <Input placeholder="Páginas lidas" value={readPages} onChangeText={setReadPages} keyboardType="number-pad" />
+        )}
 
         <View style={styles.row}>
           <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowStartDatePicker(true)}>
             <Text style={styles.datePickerText}>
-              {startedAt ? `Início: ${startedAt.toLocaleDateString()}` : "Data de Início"}
+              {startedAt ? `Início: ${startedAt.toLocaleDateString()}` : "Data de início"}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowFinishDatePicker(true)}>
-            <Text style={styles.datePickerText}>
-              {finishedAt ? `Término: ${finishedAt.toLocaleDateString()}` : "Data de Término"}
-            </Text>
-          </TouchableOpacity>
+
+          {status === "finalizado" && (
+            <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowFinishDatePicker(true)}>
+              <Text style={styles.datePickerText}>
+                {finishedAt ? `Término: ${finishedAt.toLocaleDateString()}` : "Data de término"}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        <Input
-          placeholder="Avaliação (1-5)"
-          value={rating}
-          onChangeText={setRating}
-          keyboardType="number-pad"
-          maxLength={1}
-        />
+        {status === "finalizado" && (
+          <Input
+            placeholder="Avaliação (1-5)"
+            value={rating}
+            onChangeText={setRating}
+            keyboardType="number-pad"
+            style={styles.ratingInput}
+            maxLength={1}
+          />
+        )}
 
-        <View style={[styles.row, { marginTop: 20 }]}>
-          <StyledButton title="Cancelar" variant="secondary" onPress={() => router.back()} style={styles.flexInput} />
-          <StyledButton title="Salvar" onPress={handleSave} style={styles.flexInput} loading={isLoading} />
+        <View style={[styles.inputRow, { marginTop: 20 }]}>
+          <StyledButton
+            title="Cancelar"
+            variant="secondary"
+            onPress={() => router.back()}
+            style={[styles.flexButton, styles.flexCancelButton]}
+          />
+          <StyledButton title="Salvar" onPress={handleSave} style={styles.flexButton} loading={isLoading} />
         </View>
 
         {showStartDatePicker && (
@@ -316,6 +323,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  inputRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "47.7%",
+    gap: 20,
+  },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -324,11 +337,24 @@ const styles = StyleSheet.create({
   flexInput: {
     flex: 1,
     marginBottom: 0,
+    width: "100%",
+    backgroundColor: Colors.card,
+    color: Colors.inactive,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
   },
   textArea: {
     height: 120,
     textAlignVertical: "top",
     paddingTop: 18,
+    backgroundColor: Colors.card,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    color: Colors.inactive,
   },
   divider: {
     height: 1,
@@ -371,9 +397,36 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 10,
     alignItems: "center",
+    borderColor: Colors.boder,
+    borderWidth: 1,
   },
   datePickerText: {
     color: Colors.textSecondary,
     fontSize: 16,
+  },
+  ratingInput: {
+    marginTop: 18,
+    marginBottom: -20,
+    width: "100%",
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: Colors.boder,
+  },
+  flexButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.accent,
+  },
+  flexCancelButton: {
+    backgroundColor: Colors.surface,
   },
 });

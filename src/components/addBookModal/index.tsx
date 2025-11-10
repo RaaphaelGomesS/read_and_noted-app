@@ -27,7 +27,7 @@ const AddBookModal = ({ visible, onClose, onNavigateToSearch, onNavigateToForm }
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Adicionar Novo Livro</Text>
+              <Text style={styles.modalTitle}>Adicionar livro</Text>
               <Text style={styles.modalSubtitle}>Como você deseja adicionar?</Text>
 
               <StyledButton title="Buscar template" onPress={handleSearch} style={styles.button} />

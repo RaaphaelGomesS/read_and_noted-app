@@ -63,6 +63,30 @@ export const deleteBook = async (id: number): Promise<void> => {
   }
 };
 
+export const updateReadPages = async (bookId: number, pages: number): Promise<BookTypes.BookResponse> => {
+  try {
+    const response = await api.post<BookTypes.BookResponse>("/book/update", {
+      bookId,
+      pages,
+    });
+    return response.data;
+  } catch (error) {
+    throw HandlerError.handleApiError(error, "Não foi possível atualizar as páginas.");
+  }
+};
+
+export const finishBook = async (bookId: number, rating: number): Promise<BookTypes.BookResponse> => {
+  try {
+    const response = await api.post<BookTypes.BookResponse>("/book/finish", {
+      bookId,
+      rating,
+    });
+    return response.data;
+  } catch (error) {
+    throw HandlerError.handleApiError(error, "Não foi possível finalizar o livro.");
+  }
+};
+
 export const createBook = async (request: BookTypes.BookCreateRequest, imageUri?: string) => {
   try {
     const formData = new FormData();

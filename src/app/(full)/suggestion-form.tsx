@@ -6,7 +6,7 @@ import { Colors } from "@/constants/Colors";
 import * as BookService from "@/service/BookService";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -106,7 +106,6 @@ export default function SuggestionFormScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: "Sugerir Melhoria" }} />
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <TouchableOpacity style={styles.coverContainer} onPress={handleImagePick}>
           {imageUri ? (
@@ -114,12 +113,12 @@ export default function SuggestionFormScreen() {
           ) : (
             <View style={styles.coverPlaceholder}>
               <Ionicons name="image-outline" size={50} color={Colors.textSecondary} />
-              <Text style={styles.coverPlaceholderText}>Alterar Capa</Text>
+              <Text style={styles.coverPlaceholderText}>Alterar capa</Text>
             </View>
           )}
         </TouchableOpacity>
 
-        <Text style={styles.label}>Motivo da Sugestão (Obrigatório)</Text>
+        <Text style={styles.label}>Motivo da sugestão (Obrigatório)</Text>
         <Input
           placeholder="Ex: Corrigir o número de páginas, ano, etc."
           value={reason}
@@ -133,9 +132,10 @@ export default function SuggestionFormScreen() {
 
         <Input placeholder="Título" value={title} onChangeText={setTitle} />
         <Input placeholder="Autor" value={author} onChangeText={setAuthor} />
-        <View style={styles.row}>
+        <Input placeholder="ISBN" value={isbn} onChangeText={setIsbn} keyboardType="number-pad" />
+        <View style={styles.inputRow}>
           <Input
-            placeholder="Páginas Totais"
+            placeholder="Páginas totais"
             value={totalPages}
             onChangeText={setTotalPages}
             keyboardType="number-pad"
@@ -149,15 +149,10 @@ export default function SuggestionFormScreen() {
             style={styles.flexInput}
           />
         </View>
-        <Input placeholder="Editora" value={publisher} onChangeText={setPublisher} />
-        <View style={styles.row}>
-          <Input
-            placeholder="ISBN"
-            value={isbn}
-            onChangeText={setIsbn}
-            keyboardType="number-pad"
-            style={styles.flexInput}
-          />
+
+        <View style={styles.inputRow}>
+          <Input placeholder="Editora" value={publisher} onChangeText={setPublisher} style={styles.flexInput} />
+
           <Input placeholder="Edição" value={edition} onChangeText={setEdition} style={styles.flexInput} />
         </View>
         <Input
@@ -169,9 +164,14 @@ export default function SuggestionFormScreen() {
         />
         <Input placeholder="Categorias (separadas por vírgula)" value={categories} onChangeText={setCategories} />
 
-        <View style={[styles.row, { marginTop: 20 }]}>
-          <StyledButton title="Cancelar" variant="secondary" onPress={() => router.back()} style={styles.flexInput} />
-          <StyledButton title="Enviar Sugestão" onPress={handleSave} style={styles.flexInput} loading={isLoading} />
+        <View style={[styles.inputRow, { marginTop: 20 }]}>
+          <StyledButton
+            title="Cancelar"
+            variant="secondary"
+            onPress={() => router.back()}
+            style={[styles.flexButton, styles.flexCancelButton]}
+          />
+          <StyledButton title="Enviar sugestão" onPress={handleSave} style={styles.flexButton} loading={isLoading} />
         </View>
       </ScrollView>
     </View>
@@ -218,11 +218,34 @@ const styles = StyleSheet.create({
   flexInput: {
     flex: 1,
     marginBottom: 0,
+    width: "100%",
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: Colors.boder,
+  },
+  inputRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "47.7%",
+    gap: 20,
   },
   textArea: {
     height: 120,
     textAlignVertical: "top",
     paddingTop: 18,
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: Colors.boder,
   },
   label: {
     color: Colors.textSecondary,
@@ -234,5 +257,17 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: Colors.card,
     marginVertical: 20,
+  },
+  flexButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.accent,
+  },
+  flexCancelButton: {
+    backgroundColor: Colors.surface,
   },
 });
