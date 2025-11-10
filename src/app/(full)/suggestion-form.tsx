@@ -8,7 +8,17 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function SuggestionFormScreen() {
   const router = useRouter();
@@ -105,7 +115,7 @@ export default function SuggestionFormScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <TouchableOpacity style={styles.coverContainer} onPress={handleImagePick}>
           {imageUri ? (
@@ -174,7 +184,7 @@ export default function SuggestionFormScreen() {
           <StyledButton title="Enviar sugestão" onPress={handleSave} style={styles.flexButton} loading={isLoading} />
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

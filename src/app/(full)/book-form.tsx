@@ -10,7 +10,7 @@ import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/dat
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const statusDisplayMap: Record<BookStatus, string> = {
   aguardando: "Aguardando",
@@ -212,7 +212,7 @@ export default function BookFormScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <Stack.Screen options={{ title: isTemplateFieldsDisabled ? "Adicionar livro" : "Formulário completo" }} />
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <TouchableOpacity style={styles.coverContainer} onPress={handleImagePick}>
@@ -374,7 +374,7 @@ export default function BookFormScreen() {
           />
         )}
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

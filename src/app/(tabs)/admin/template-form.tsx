@@ -7,7 +7,17 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function TemplateFormScreen() {
   const router = useRouter();
@@ -111,7 +121,7 @@ export default function TemplateFormScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <Stack.Screen options={{ title: "Editar template" }} />
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <TouchableOpacity style={styles.coverContainer} onPress={handleImagePick}>
@@ -169,7 +179,7 @@ export default function TemplateFormScreen() {
           <StyledButton title="Salvar Alterações" onPress={handleSave} style={styles.flexButton} loading={isLoading} />
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

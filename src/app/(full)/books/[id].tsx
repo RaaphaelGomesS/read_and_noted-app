@@ -11,7 +11,18 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const statusDisplayMap: Record<BookStatus, string> = {
   aguardando: "Aguardando",
@@ -197,7 +208,7 @@ export default function BookDetailScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <Stack.Screen
         options={{
           title: "Detalhes do livro",
@@ -353,7 +364,7 @@ export default function BookDetailScreen() {
           currentValue={String(book.libraryId)}
         />
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
