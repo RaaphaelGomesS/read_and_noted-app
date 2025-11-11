@@ -1,19 +1,17 @@
-import { BookSummary } from "@/@types/statistics.types";
+import { BookTemplate } from "@/@types/template.types";
 import { Colors } from "@/constants/Colors";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type RecommendationCardProps = {
-  book: BookSummary;
+  book: BookTemplate;
+  onPress: () => void;
 };
 
-const RecommendationCard = ({ book }: RecommendationCardProps) => {
+const RecommendationCard = ({ book, onPress }: RecommendationCardProps) => {
   return (
-    <TouchableOpacity style={styles.card}>
-      <Image
-        source={{ uri: book.img || undefined }}
-        style={styles.image}
-      />
+    <TouchableOpacity style={styles.card} onPress={onPress}>
+      <Image source={{ uri: book.img || undefined }} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.title} numberOfLines={1}>
           {book.title}

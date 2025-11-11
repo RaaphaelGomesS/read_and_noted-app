@@ -1,8 +1,10 @@
-import { BookSummary, StatisticsData } from "@/@types/statistics.types";
+import { StatisticsData } from "@/@types/statistics.types";
+import { BookTemplate } from "@/@types/template.types";
 import RecommendationCard from "@/components/recommendationCard";
 import { Colors } from "@/constants/Colors";
+import { useLibrary } from "@/context/LibraryContext";
 import * as StatisticsService from "@/service/StatisticsService";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -44,18 +46,26 @@ const CategoryList = ({ data }: { data: StatisticsData["finishedBooksByCategory"
   </View>
 );
 
-const RecommendationsList = ({ data }: { data: BookSummary[] }) => (
+const RecommendationsList = ({
+  data,
+  onBookPress,
+}: {
+  data: BookTemplate[];
+  onBookPress: (book: BookTemplate) => void;
+}) => (
   <View style={styles.sectionContainer}>
-    <Text style={styles.sectionTitle}>Sugestões baseadas na última leitura finalizada</Text>
+    <Text style={styles.sectionTitle}>Sugestões baseadas na última leitura</Text>
     {data.map((book) => (
-      <RecommendationCard key={book.templateId} book={book} />
+      <RecommendationCard key={book.id} book={book} onPress={() => onBookPress(book)} />
     ))}
   </View>
 );
 
 export default function StatisticsScreen() {
+  const router = useRouter();
+  const { selectedLibraryId } = useLibrary();
   const [stats, setStats] = useState<StatisticsData | null>(null);
-  const [recommendations, setRecommendations] = useState<BookSummary[]>([]);
+  const [recommendations, setRecommendations] = useState<BookTemplate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
@@ -79,6 +89,33 @@ export default function StatisticsScreen() {
       fetchData();
     }, [])
   );
+
+  const handleSuggestionPress = (template: BookTemplate) => {
+    if (!selectedLibraryId) {
+      Alert.alert(
+        "Nenhuma biblioteca selecionada",
+        "Por favor, selecione uma biblioteca na aba 'Bibliotecas' antes de adicionar um livro.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
+    Alert.alert("Adicionar à biblioteca", `Deseja adicionar "${template.title}" à sua biblioteca atual?`, [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Sim",
+        onPress: () => {
+          router.push({
+            pathname: "/(full)/book-form",
+            params: {
+              libraryId: selectedLibraryId.toString(),
+              template: JSON.stringify(template),
+            },
+          });
+        },
+      },
+    ]);
+  };
 
   if (isLoading) {
     return (
@@ -107,7 +144,7 @@ export default function StatisticsScreen() {
 
       <CategoryList data={stats.finishedBooksByCategory} />
 
-      {recommendations.length > 0 && <RecommendationsList data={recommendations} />}
+      {recommendations.length > 0 && <RecommendationsList data={recommendations} onBookPress={handleSuggestionPress} />}
     </ScrollView>
   );
 }

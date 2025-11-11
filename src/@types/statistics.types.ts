@@ -14,10 +14,3 @@ export type StatisticsData = {
   statusCounts: BookStatusCount[];
   finishedBooksByCategory: CategoryFinishCount[];
 };
-
-export type BookSummary = {
-  templateId: number;
-  title: string;
-  author: string;
-  img: string;
-};
