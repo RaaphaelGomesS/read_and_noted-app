@@ -41,8 +41,8 @@ export default function NoteDetailScreen() {
   const [isTypeModalVisible, setTypeModalVisible] = useState(false);
 
   useEffect(() => {
-    initializeMarkdownRouter(router);
-  }, [router]);
+    initializeMarkdownRouter(router, saveNote);
+  }, [router, note]);
 
   const debouncedNote = useDebounce(note, 2000);
 
@@ -78,7 +78,8 @@ export default function NoteDetailScreen() {
     }, [noteId])
   );
 
-  const saveNote = async (dataToSave: NoteFull) => {
+  const saveNote = async (dataToSave: NoteFull | null = note) => {
+    if (!dataToSave) return;
     setIsSaving(true);
     try {
       const requestData: NoteRequest = {
@@ -92,7 +93,10 @@ export default function NoteDetailScreen() {
 
       await NoteService.updateNote(requestData);
 
-      setInitialNote(dataToSave);
+      const updatedNote = await NoteService.getNoteById(dataToSave.id);
+
+      setNote(updatedNote);
+      setInitialNote(updatedNote);
     } catch (error: any) {
       Alert.alert("Erro ao Salvar", error.message);
     } finally {
