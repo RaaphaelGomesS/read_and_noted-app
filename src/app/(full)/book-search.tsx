@@ -1,5 +1,6 @@
 import { BookTemplate, BookTemplateSearchFilter } from "@/@types/template.types";
 import { StyledButton } from "@/components/button";
+import ISBNScannerModal from "@/components/isbnConnectorModal";
 import SimpleSelectModal, { OptionItem } from "@/components/simpleSelectModal";
 import TemplateSearchCard from "@/components/templateSearchCard";
 import { Colors } from "@/constants/Colors";
@@ -26,6 +27,7 @@ export default function BookSearchScreen() {
   const [placeholder, setPlaceholder] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
   const [results, setResults] = useState<BookTemplate[]>([]);
+  const [isScannerVisible, setIsScannerVisible] = useState(false);
   const [filterType, setFilterType] = useState<FilterType>("title");
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 
@@ -76,6 +78,12 @@ export default function BookSearchScreen() {
     });
   };
 
+  const handleBarcodeScanned = (isbn: string) => {
+    setFilterType("ISBN");
+    setSearchText(isbn);
+    handleSearch();
+  };
+
   useEffect(() => {
     const placeholder =
       filterType === "title" ? "Crime e castigo..." : filterType === "author" ? "Dostoiévski..." : "9788573266467...";
@@ -94,7 +102,7 @@ export default function BookSearchScreen() {
         <Text style={styles.emptySubtitle}>O que deseja fazer?</Text>
         <StyledButton title="Buscar em API externa" onPress={navigateToExternalSearch} style={styles.emptyButton} />
         <StyledButton
-          title="Preencher do zero"
+          title="Preencher formulário do zero"
           onPress={navigateToBlankForm}
           variant="secondary"
           style={styles.emptyButton}
@@ -119,6 +127,13 @@ export default function BookSearchScreen() {
             returnKeyType="search"
           />
         </View>
+
+        {filterType === "ISBN" && (
+          <TouchableOpacity style={styles.filterButton} onPress={() => setIsScannerVisible(true)}>
+            <Ionicons name="camera-outline" size={24} color={Colors.text} />
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity style={styles.filterButton} onPress={() => setFilterModalVisible(true)}>
           <Ionicons name="filter" size={24} color={Colors.text} />
         </TouchableOpacity>
@@ -135,6 +150,12 @@ export default function BookSearchScreen() {
           contentContainerStyle={{ paddingBottom: 50 }}
         />
       )}
+
+      <ISBNScannerModal
+        visible={isScannerVisible}
+        onClose={() => setIsScannerVisible(false)}
+        onBarcodeScanned={handleBarcodeScanned}
+      />
 
       <SimpleSelectModal
         visible={isFilterModalVisible}
@@ -220,5 +241,7 @@ const styles = StyleSheet.create({
   emptyButton: {
     width: "100%",
     marginVertical: 5,
+    alignItems: "center",
+    paddingTop: 10
   },
 });

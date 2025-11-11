@@ -42,7 +42,7 @@ const CategoryEditModal = ({ visible, category, onClose, onSave, onDelete }: Cat
       onSave(updated);
       onClose();
     } catch (error: any) {
-      Alert.alert("Erro ao Atualizar", error.message);
+      Alert.alert("Erro ao atualizar", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +50,7 @@ const CategoryEditModal = ({ visible, category, onClose, onSave, onDelete }: Cat
 
   const handleDelete = () => {
     if (!category) return;
-    Alert.alert("Confirmar Exclusão", `Tem certeza que deseja excluir a categoria "${category.name}"?`, [
+    Alert.alert("Confirmar exclusão", `Tem certeza que deseja excluir a categoria "${category.name}"?`, [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",

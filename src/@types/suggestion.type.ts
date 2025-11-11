@@ -15,7 +15,7 @@ export type Suggestion = {
   justification: string | null;
   status: string;
   categories: string[];
-  suggesterUsername: string;
+  username: string;
 };
 
 export type SuggestionRequest = {

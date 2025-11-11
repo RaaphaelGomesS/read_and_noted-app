@@ -98,7 +98,7 @@ export default function NoteDetailScreen() {
       setNote(updatedNote);
       setInitialNote(updatedNote);
     } catch (error: any) {
-      Alert.alert("Erro ao Salvar", error.message);
+      Alert.alert("Erro ao salvar", error.message);
     } finally {
       setIsSaving(false);
     }
@@ -126,7 +126,7 @@ export default function NoteDetailScreen() {
             await NoteService.deleteNote(noteId);
             router.back();
           } catch (error: any) {
-            Alert.alert("Erro ao Excluir", error.message);
+            Alert.alert("Erro ao excluir", error.message);
           }
         },
       },
@@ -135,7 +135,7 @@ export default function NoteDetailScreen() {
 
   const topMenuOptions = [
     { label: isEditingText ? "Salvar e visualizar" : "Editar corpo", onPress: handleToggleEditMode },
-    { label: "Excluir Anotação", onPress: handleDelete, isDestructive: true },
+    { label: "Excluir anotação", onPress: handleDelete, isDestructive: true },
   ];
 
   const getCategoryColor = (categoryName: string | null) => {

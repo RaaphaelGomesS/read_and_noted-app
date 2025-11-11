@@ -143,6 +143,13 @@ export default function SuggestionFormScreen() {
         <Input placeholder="Título" value={title} onChangeText={setTitle} />
         <Input placeholder="Autor" value={author} onChangeText={setAuthor} />
         <Input placeholder="ISBN" value={isbn} onChangeText={setIsbn} keyboardType="number-pad" />
+
+        <View style={styles.inputRow}>
+          <Input placeholder="Editora" value={publisher} onChangeText={setPublisher} style={styles.flexInput} />
+
+          <Input placeholder="Edição" value={edition} onChangeText={setEdition} style={styles.flexInput} />
+        </View>
+
         <View style={styles.inputRow}>
           <Input
             placeholder="Páginas totais"
@@ -158,12 +165,6 @@ export default function SuggestionFormScreen() {
             keyboardType="number-pad"
             style={styles.flexInput}
           />
-        </View>
-
-        <View style={styles.inputRow}>
-          <Input placeholder="Editora" value={publisher} onChangeText={setPublisher} style={styles.flexInput} />
-
-          <Input placeholder="Edição" value={edition} onChangeText={setEdition} style={styles.flexInput} />
         </View>
         <Input
           placeholder="Descrição"

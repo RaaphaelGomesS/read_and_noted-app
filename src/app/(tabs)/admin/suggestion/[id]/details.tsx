@@ -20,7 +20,7 @@ export default function SuggestionDetailsTab() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.reasonBox}>
-          <Text style={styles.reasonTitle}>Motivo (por {details.updated.suggesterUsername}):</Text>
+          <Text style={styles.reasonTitle}>Motivo (por {details.updated.username}):</Text>
           <Text style={styles.reasonText}>{details.updated.reason}</Text>
         </View>
 

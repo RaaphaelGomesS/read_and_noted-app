@@ -46,7 +46,7 @@ const CategoryList = ({ data }: { data: StatisticsData["finishedBooksByCategory"
 
 const RecommendationsList = ({ data }: { data: BookSummary[] }) => (
   <View style={styles.sectionContainer}>
-    <Text style={styles.sectionTitle}>Sugestões baseado nas suas leituras</Text>
+    <Text style={styles.sectionTitle}>Sugestões baseadas na última leitura finalizada</Text>
     {data.map((book) => (
       <RecommendationCard key={book.templateId} book={book} />
     ))}

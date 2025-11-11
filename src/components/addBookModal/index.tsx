@@ -27,12 +27,11 @@ const AddBookModal = ({ visible, onClose, onNavigateToSearch, onNavigateToForm }
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Adicionar livro</Text>
-              <Text style={styles.modalSubtitle}>Como você deseja adicionar?</Text>
+              <Text style={styles.modalTitle}>Como deseja adicionar o livro?</Text>
 
-              <StyledButton title="Buscar template" onPress={handleSearch} style={styles.button} />
+              <StyledButton title="Buscar por template" onPress={handleSearch} style={styles.button} />
               <StyledButton
-                title="Preencher formulário"
+                title="Preencher formulário completo"
                 variant="secondary"
                 onPress={handleForm}
                 style={styles.button}
@@ -62,19 +61,16 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: "bold",
     color: Colors.text,
     marginBottom: 10,
   },
-  modalSubtitle: {
-    fontSize: 16,
-    color: Colors.textSecondary,
-    marginBottom: 20,
-    textAlign: "center",
-  },
   button: {
+    paddingTop: 10,
     width: "100%",
     marginVertical: 5,
+    alignItems: "center",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.surface,
   },
 });
 
