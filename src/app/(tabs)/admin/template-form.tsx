@@ -176,7 +176,7 @@ export default function TemplateFormScreen() {
             onPress={() => router.back()}
             style={[styles.flexButton, styles.flexCancelButton]}
           />
-          <StyledButton title="Salvar Alterações" onPress={handleSave} style={styles.flexButton} loading={isLoading} />
+          <StyledButton title="Salvar alterações" onPress={handleSave} style={styles.flexButton} loading={isLoading} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

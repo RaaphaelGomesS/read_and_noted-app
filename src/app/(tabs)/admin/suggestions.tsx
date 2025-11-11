@@ -19,7 +19,6 @@ export default function SuggestionsScreen() {
     else setIsFetchingMore(true);
 
     try {
-      //
       const data = await AdminService.getSuggestions("IN_ANALYZE", pageToFetch);
       setSuggestions((prev) => (pageToFetch === 0 ? data.data : [...prev, ...data.data]));
       setPage(data.page);
@@ -57,7 +56,7 @@ export default function SuggestionsScreen() {
       keyExtractor={(item) => item.id.toString()}
       style={styles.container}
       renderItem={({ item }) => (
-        <SuggestionCard suggestion={item} onPress={() => router.push(`/admin/suggestion/${item.id}`)} />
+        <SuggestionCard suggestion={item} onPress={() => router.push(`/admin/suggestion/${item.id}/details`)} />
       )}
       ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma sugestão em análise.</Text>}
       onRefresh={() => fetchData(0)}

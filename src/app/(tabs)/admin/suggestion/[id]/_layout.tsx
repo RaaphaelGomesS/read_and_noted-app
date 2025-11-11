@@ -3,47 +3,69 @@ import { StyledButton } from "@/components/button";
 import Input from "@/components/input";
 import { Colors } from "@/constants/Colors";
 import * as AdminService from "@/service/AdminService";
-import { Tabs, useGlobalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, Tabs, useLocalSearchParams, useRouter } from "expo-router";
+import React, { createContext, useEffect, useState } from "react";
+import { Alert, Modal, StyleSheet, Text, View } from "react-native";
 
 type SuggestionContextType = {
   details: SuggestionDetails | null;
   isLoading: boolean;
+  isActionLoading: boolean;
+  handleApprove: () => void;
+  handleDecline: () => void;
+  openDeclineModal: () => void;
 };
-export const SuggestionContext = React.createContext<SuggestionContextType>({ details: null, isLoading: true });
+
+export const SuggestionContext = createContext<SuggestionContextType>({
+  details: null,
+  isLoading: true,
+  isActionLoading: false,
+  handleApprove: () => {},
+  handleDecline: () => {},
+  openDeclineModal: () => {},
+});
 
 const DeclineModal = ({ visible, onClose, onSubmit, justification, setJustification, isLoading }: any) => (
   <Modal transparent={true} animationType="fade" visible={visible} onRequestClose={onClose}>
     <View style={styles.modalOverlay}>
       <View style={styles.modalContainer}>
-        <Text style={styles.modalTitle}>Recusar Sugestão</Text>
+        <Text style={styles.modalTitle}>Recusar sugestão</Text>
         <Input
           placeholder="Justificativa da recusa..."
           value={justification}
           onChangeText={setJustification}
           multiline
-          style={{ height: 100, textAlignVertical: "top", paddingTop: 16 }}
+          style={styles.textArea}
         />
-        <StyledButton
-          title={isLoading ? "Enviando..." : "Enviar Recusa"}
-          onPress={onSubmit}
-          style={styles.declineButton}
-          disabled={isLoading}
-        />
-        <StyledButton title="Cancelar" variant="secondary" onPress={onClose} disabled={isLoading} />
+        <View style={styles.buttonContainer}>
+          <StyledButton
+            title={isLoading ? "Enviando..." : "Enviar recusa"}
+            onPress={onSubmit}
+            style={[styles.flexButton, styles.declineButton]}
+            disabled={isLoading}
+          />
+          <StyledButton
+            title="Cancelar"
+            variant="secondary"
+            style={styles.flexButton}
+            onPress={onClose}
+            disabled={isLoading}
+          />
+        </View>
       </View>
     </View>
   </Modal>
 );
 
-export default function SuggestionDetailLayout() {
+export default function SuggestionDetailTabLayout() {
   const router = useRouter();
-  const { id } = useGlobalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const suggestionId = parseInt(id, 10);
 
   const [details, setDetails] = useState<SuggestionDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isActionLoading, setIsActionLoading] = useState(false);
   const [isDeclineModalVisible, setIsDeclineModalVisible] = useState(false);
   const [justification, setJustification] = useState("");
 
@@ -59,13 +81,15 @@ export default function SuggestionDetailLayout() {
 
   const handleApprove = async () => {
     if (!details) return;
-    setIsLoading(true);
+    setIsActionLoading(true);
     try {
       await AdminService.approveSuggestion(suggestionId);
-      Alert.alert("Sucesso", "Sugestão aprovada.", [{ text: "OK", onPress: () => router.back() }]);
+      Alert.alert("Sucesso", "Sugestão aprovada.", [
+        { text: "OK", onPress: () => router.replace("/(tabs)/admin/suggestions") },
+      ]);
     } catch (error: any) {
       Alert.alert("Erro ao aprovar", error.message);
-      setIsLoading(false);
+      setIsActionLoading(false);
     }
   };
 
@@ -74,75 +98,71 @@ export default function SuggestionDetailLayout() {
       Alert.alert("Erro", "A justificativa é obrigatória para recusar.");
       return;
     }
-    setIsLoading(true);
+    setIsActionLoading(true);
     try {
       await AdminService.declineSuggestion(suggestionId, justification);
-      Alert.alert("Sucesso", "Sugestão recusada.", [{ text: "OK", onPress: () => router.back() }]);
+      Alert.alert("Sucesso", "Sugestão recusada.", [
+        { text: "OK", onPress: () => router.replace("/(tabs)/admin/suggestions") },
+      ]);
       setIsDeclineModalVisible(false);
     } catch (error: any) {
       Alert.alert("Erro ao recusar", error.message);
-      setIsLoading(false);
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
-  if (isLoading && !details) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color={Colors.accent} />
-      </View>
-    );
-  }
+  const openDeclineModal = () => setIsDeclineModalVisible(true);
 
-  if (!details) {
-    return null;
-  }
+  const contextValue = {
+    details,
+    isLoading,
+    isActionLoading,
+    handleApprove,
+    handleDecline,
+    openDeclineModal,
+  };
 
   return (
-    <SuggestionContext.Provider value={{ details, isLoading }}>
+    <SuggestionContext.Provider value={contextValue}>
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scroll}>
-          <View style={styles.reasonBox}>
-            <Text style={styles.reasonTitle}>Motivo da sugestão (por @{details.updated.suggesterUsername}):</Text>
-            <Text style={styles.reasonText}>{details.updated.reason}</Text>
-          </View>
-
-          <Tabs
-            screenOptions={{
-              headerShown: false,
-              tabBarActiveTintColor: Colors.accent,
-              tabBarInactiveTintColor: Colors.textSecondary,
-              tabBarStyle: {
-                backgroundColor: Colors.card,
-                borderRadius: 10,
-                overflow: "hidden",
-                marginBottom: 16,
-              },
-              tabBarLabelStyle: {
-                fontSize: 15,
-                fontWeight: "500",
-                textTransform: "none",
-              },
+        <Stack.Screen options={{ title: "Analisar sugestão" }} />
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: Colors.accent,
+            tabBarInactiveTintColor: Colors.textSecondary,
+            tabBarStyle: {
+              backgroundColor: Colors.surface,
+              borderTopWidth: 0,
+              paddingBottom: 24,
+              height: 70,
+            },
+            tabBarLabelStyle: {
+              fontSize: 14,
+              fontWeight: "500",
+              paddingBottom: 5,
+            },
+            tabBarIconStyle: {
+              marginTop: 5,
+            },
+          }}
+        >
+          <Tabs.Screen
+            name="details"
+            options={{
+              title: "Sugestão",
+              tabBarIcon: ({ color, size }) => <Ionicons name="bulb-outline" size={size} color={color} />,
             }}
-          >
-            <Tabs.Screen name="details" options={{ title: "Sugestão" }} />
-            <Tabs.Screen name="original" options={{ title: "Template original" }} />
-          </Tabs>
-        </ScrollView>
-
-        <View style={styles.buttonContainer}>
-          <StyledButton
-            title={isLoading ? "Aprovando..." : "Aprovar"}
-            onPress={handleApprove}
-            style={styles.approveButton}
-            disabled={isLoading}
           />
-          <StyledButton
-            title={isLoading ? "Recusando..." : "Recusar"}
-            onPress={() => setIsDeclineModalVisible(true)}
-            style={styles.declineButton}
-            disabled={isLoading}
+          <Tabs.Screen
+            name="original"
+            options={{
+              title: "Original",
+              tabBarIcon: ({ color, size }) => <Ionicons name="document-text-outline" size={size} color={color} />,
+            }}
           />
-        </View>
+        </Tabs>
 
         <DeclineModal
           visible={isDeclineModalVisible}
@@ -150,7 +170,7 @@ export default function SuggestionDetailLayout() {
           onSubmit={handleDecline}
           justification={justification}
           setJustification={setJustification}
-          isLoading={isLoading}
+          isLoading={isActionLoading}
         />
       </View>
     </SuggestionContext.Provider>
@@ -162,38 +182,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.background,
-  },
-  scroll: {
-    padding: 16,
-  },
-  reasonBox: {
-    backgroundColor: Colors.card,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  reasonTitle: {
-    color: Colors.textSecondary,
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  reasonText: {
-    color: Colors.text,
-    fontSize: 16,
-  },
-  buttonContainer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: Colors.card,
-    backgroundColor: Colors.background,
-    flexDirection: "row",
-    gap: 10,
-  },
   approveButton: {
     backgroundColor: "#2ECC71",
     flex: 1,
@@ -201,8 +189,21 @@ const styles = StyleSheet.create({
   },
   declineButton: {
     backgroundColor: "#E74C3C",
-    flex: 1,
-    marginTop: 0,
+  },
+  flexButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.card,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "47.7%",
+    gap: 20,
   },
   modalOverlay: {
     flex: 1,
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: "100%",
-    backgroundColor: Colors.card,
+    backgroundColor: Colors.background,
     borderRadius: 15,
     padding: 24,
     gap: 10,
@@ -224,5 +225,16 @@ const styles = StyleSheet.create({
     color: Colors.text,
     marginBottom: 10,
     textAlign: "center",
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: "top",
+    paddingTop: 18,
+    backgroundColor: Colors.card,
+    color: Colors.text,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 10,
+    fontSize: 16,
   },
 });

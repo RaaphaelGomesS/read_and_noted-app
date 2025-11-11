@@ -62,9 +62,15 @@ export default function TemplateDetailScreen() {
       </ScrollView>
 
       <View style={styles.buttonContainer}>
-        <StyledButton title="Aprovar" onPress={() => handleAction("approve")} style={styles.approveButton} />
-        <StyledButton title="Editar" onPress={() => handleAction("edit")} style={styles.editButton} />
-        <StyledButton title="Desativar" onPress={() => handleAction("deactivate")} style={styles.deactivateButton} />
+        <View style={styles.flexContainer}>
+          <StyledButton title="Aprovar" onPress={() => handleAction("approve")} style={styles.approveButton} />
+          <StyledButton title="Desativar" onPress={() => handleAction("deactivate")} style={styles.deactivateButton} />
+        </View>
+        <StyledButton
+          title="Editar"
+          onPress={() => handleAction("edit")}
+          style={[styles.editButton, { marginBottom: 20 }]}
+        />
       </View>
     </View>
   );
@@ -91,13 +97,37 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     gap: 10,
   },
+  flexContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "47.7%",
+    gap: 20,
+  },
   approveButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#2ECC71",
   },
   editButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#3498DB",
   },
   deactivateButton: {
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.textSecondary,
   },
 });
