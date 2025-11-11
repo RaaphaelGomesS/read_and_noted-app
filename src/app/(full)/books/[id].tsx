@@ -80,7 +80,6 @@ export default function BookDetailScreen() {
         setBook(apiBook);
         setTemplate(apiTemplate);
 
-        //Template
         setTitle(apiTemplate.title);
         setAuthor(apiTemplate.author);
         setTotalPages(String(apiTemplate.pages || 0));
@@ -92,7 +91,6 @@ export default function BookDetailScreen() {
         setCategories(apiTemplate.categories?.join(", ") || "");
         setImageUri(apiTemplate.img || null);
 
-        //Livro
         setStatus(apiBook.status as BookStatus);
         setReadPages(String(apiBook.pages || ""));
         setRating(String(apiBook.rating || ""));
@@ -300,11 +298,13 @@ export default function BookDetailScreen() {
         )}
 
         <View style={styles.row}>
-          <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowStartDatePicker(true)}>
-            <Text style={styles.datePickerText}>
-              {startedAt ? `Início: ${startedAt.toLocaleDateString()}` : "Data de início"}
-            </Text>
-          </TouchableOpacity>
+          {(status === "finalizado" || status === "lendo") && (
+            <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowStartDatePicker(true)}>
+              <Text style={styles.datePickerText}>
+                {startedAt ? `Início: ${startedAt.toLocaleDateString()}` : "Data de início"}
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {status === "finalizado" && (
             <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowFinishDatePicker(true)}>
