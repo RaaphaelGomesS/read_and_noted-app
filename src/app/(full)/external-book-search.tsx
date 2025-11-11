@@ -36,12 +36,23 @@ export default function ExternalBookSearchScreen() {
 
     try {
       let response: ExternalBookSearchResult[] = [];
+
       if (searchMode === "isbn") {
         response = await ExternalBookService.searchOpenLibraryByISBN(textToSearch.trim());
+        setResults(response);
       } else {
         response = await ExternalBookService.searchOpenLibraryByQuery(textToSearch.trim(), searchMode);
+
+        const filteredResponse = response.filter((book) => {
+          const hasCover = !!book.img;
+
+          const hasEditions = (book.editionCount || 0) > 0;
+
+          return hasCover && hasEditions;
+        });
+
+        setResults(filteredResponse);
       }
-      setResults(response);
     } catch (error: any) {
       Alert.alert("Erro na Busca", error.message);
     } finally {

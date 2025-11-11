@@ -25,6 +25,33 @@ const StarDisplay = ({ rating }: { rating: number }) => {
   return <View style={styles.starContainer}>{stars}</View>;
 };
 
+const ReadingDuration = ({ startDate, finishDate }: { startDate: string; finishDate: string }) => {
+  try {
+    const start = new Date(startDate).getTime();
+    const finish = new Date(finishDate).getTime();
+
+    if (isNaN(start) || isNaN(finish)) return null;
+
+    const diffMs = finish - start;
+    if (diffMs < 0) return null;
+
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+    const displayDays = Math.max(1, diffDays);
+    const dayText = displayDays === 1 ? "dia" : "dias";
+
+    return (
+      <View style={styles.durationContainer}>
+        <Ionicons name="time-outline" size={16} color={Colors.textSecondary} />
+        <Text style={styles.durationText}>{`${displayDays} ${dayText}`}</Text>
+      </View>
+    );
+  } catch (e) {
+    console.error("Erro ao calcular data:", e);
+    return null;
+  }
+};
+
 const BookCard = ({ book, status, onPress, onEditPress }: BookCardProps) => {
   const progress = book.totalPages > 0 ? (book.readPages / book.totalPages) * 100 : 0;
 
@@ -45,6 +72,9 @@ const BookCard = ({ book, status, onPress, onEditPress }: BookCardProps) => {
         )}
 
         {status === "finalizado" && book.rating != null && book.rating > 0 && <StarDisplay rating={book.rating} />}
+        {book.startedDate && book.finishedDate && (
+          <ReadingDuration startDate={book.startedDate} finishDate={book.finishedDate} />
+        )}
       </View>
       {status === "lendo" && (
         <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
@@ -119,9 +149,25 @@ const styles = StyleSheet.create({
     right: 10,
     padding: 4,
   },
+  finishedContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 16,
+    gap: 16,
+  },
   starContainer: {
     flexDirection: "row",
-    marginTop: 16,
+  },
+  durationContainer: {
+    paddingTop: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  durationText: {
+    color: Colors.textSecondary,
+    fontSize: 14,
+    fontWeight: "500",
   },
 });
 

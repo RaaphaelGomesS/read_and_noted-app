@@ -31,15 +31,15 @@ export default function BookSearchScreen() {
   const [filterType, setFilterType] = useState<FilterType>("title");
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 
-  const handleSearch = async () => {
-    if (!searchText.trim()) return;
+  const handleSearch = async (textToSearch: string = searchText, type: FilterType = filterType) => {
+    if (!textToSearch.trim()) return;
 
     setIsLoading(true);
     setResults([]);
     setHasSearched(true);
 
     const filter: BookTemplateSearchFilter = {
-      [filterType]: searchText.trim(),
+      [type]: textToSearch.trim(),
       page: 0,
       pageSize: 20,
     };
@@ -79,9 +79,10 @@ export default function BookSearchScreen() {
   };
 
   const handleBarcodeScanned = (isbn: string) => {
-    setFilterType("ISBN");
+    const newFilterType = "ISBN";
+    setFilterType(newFilterType);
     setSearchText(isbn);
-    handleSearch();
+    handleSearch(isbn, newFilterType);
   };
 
   useEffect(() => {
@@ -123,7 +124,7 @@ export default function BookSearchScreen() {
             placeholderTextColor={Colors.textSecondary}
             value={searchText}
             onChangeText={setSearchText}
-            onSubmitEditing={handleSearch}
+            onSubmitEditing={() => handleSearch()}
             returnKeyType="search"
           />
         </View>
@@ -242,6 +243,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginVertical: 5,
     alignItems: "center",
-    paddingTop: 10
+    paddingTop: 10,
   },
 });

@@ -7,19 +7,27 @@ const openLibraryApi = axios.create({
   baseURL: OPENLIBRARY_API_URL,
 });
 
-const mapEditionDataToExternalBookData = (editionData: any, isbn?: string): ExternalBookData => {
-  const author = editionData.authors?.map((a: any) => a.name).join(", ") || "Autor desconhecido";
+const mapRichEditionDataToExternalBookData = (editionData: any, isbn?: string): ExternalBookData => {
+  let author: string = "Autor desconhecido";
+  if (editionData.authors && Array.isArray(editionData.authors)) {
+    const authorNames = editionData.authors.map((a: any) => (a.name ? a.name : null)).filter(Boolean);
+    if (authorNames.length > 0) {
+      author = authorNames.join(", ");
+    }
+  }
 
-  const foundIsbn = isbn || editionData.isbn_13?.[0] || editionData.isbn_10?.[0] || "";
+  const foundIsbn = isbn || editionData.identifiers?.isbn_13?.[0] || editionData.identifiers?.isbn_10?.[0] || "";
 
-  const img = editionData.covers
+  const img = editionData.cover
+    ? editionData.cover.medium
+    : editionData.covers
     ? `https://covers.openlibrary.org/b/id/${editionData.covers[0]}-M.jpg`
     : foundIsbn
     ? `https://covers.openlibrary.org/b/isbn/${foundIsbn}-M.jpg`
     : undefined;
 
   let year: number | undefined = undefined;
-  const dateString = editionData.publish_date || editionData.first_publish_year || "";
+  const dateString = editionData.publish_date || "";
   if (dateString) {
     const yearMatch = dateString.toString().match(/\b\d{4}\b/);
     if (yearMatch) {
@@ -27,18 +35,13 @@ const mapEditionDataToExternalBookData = (editionData: any, isbn?: string): Exte
     }
   }
 
-  const publisher =
-    editionData.publishers?.map((p: any) => (typeof p === "string" ? p : p.name)).join(", ") || undefined;
+  const publisher = editionData.publishers?.map((p: any) => p.name).join(", ") || undefined;
 
-  const subjectsArray = editionData.subjects || editionData.subject_places || [];
+  const subjectsArray = editionData.subjects || [];
   const categories = subjectsArray
-    .map((subject: any) => {
-      if (typeof subject === "string") return subject;
-      if (typeof subject === "object" && subject.name) return subject.name;
-      return null;
-    })
-    .filter((s: string | null): s is string => s !== null)
-    .slice(0, 3);
+    .map((subject: any) => subject.name)
+    .filter(Boolean)
+    .slice(0, 5);
 
   const descriptionObj = editionData.description;
   let description: string | undefined = undefined;
@@ -47,6 +50,8 @@ const mapEditionDataToExternalBookData = (editionData: any, isbn?: string): Exte
   } else if (typeof descriptionObj === "object" && descriptionObj !== null && descriptionObj.value) {
     description = descriptionObj.value;
   }
+
+  const editionName = undefined;
 
   const rawData: ExternalBookData = {
     title: editionData.title,
@@ -58,7 +63,7 @@ const mapEditionDataToExternalBookData = (editionData: any, isbn?: string): Exte
     img: img,
     categories: categories,
     description: description,
-    edition: editionData.edition_name,
+    edition: editionName,
   };
 
   return rawData;
@@ -80,18 +85,7 @@ const mapOpenLibraryQueryToSearchResult = (doc: any): ExternalBookSearchResult =
     author: author,
     img: img,
     raw: rawData,
-  };
-};
-
-const mapOpenLibraryISBNToSearchResult = (book: any, isbn: string): ExternalBookSearchResult => {
-  const rawData = mapEditionDataToExternalBookData(book, isbn);
-
-  return {
-    title: rawData.title,
-    author: rawData.author,
-    isbn: rawData.isbn,
-    img: rawData.img,
-    raw: rawData,
+    editionCount: doc.edition_count || 0,
   };
 };
 
@@ -133,7 +127,17 @@ export const searchOpenLibraryByISBN = async (isbn: string): Promise<ExternalBoo
     });
     const bookData = response.data[`ISBN:${isbn}`];
     if (bookData) {
-      return [mapOpenLibraryISBNToSearchResult(bookData, isbn)];
+      const mapToSearchResult = (book: any, isbn: string): ExternalBookSearchResult => {
+        const rawData = mapRichEditionDataToExternalBookData(book, isbn);
+        return {
+          title: rawData.title,
+          author: rawData.author,
+          isbn: rawData.isbn,
+          img: rawData.img,
+          raw: rawData,
+        };
+      };
+      return [mapToSearchResult(bookData, isbn)];
     }
     return [];
   } catch (error) {
@@ -149,7 +153,7 @@ export const getEditionsForWork = async (workKey: string): Promise<EditionResult
     const response = await openLibraryApi.get(`${workKey}/editions.json`, {
       params: {
         limit: 20,
-        language: "por,eng",
+        language: "por",
       },
     });
 
@@ -171,8 +175,24 @@ export const getEditionsForWork = async (workKey: string): Promise<EditionResult
 
 export const getBookDetailsFromEditionKey = async (editionKey: string): Promise<ExternalBookData> => {
   try {
-    const response = await openLibraryApi.get(`${editionKey}.json`);
-    return mapEditionDataToExternalBookData(response.data);
+    const editionResponse = await openLibraryApi.get(`${editionKey}.json`);
+
+    const isbn = editionResponse.data?.isbn_13?.[0] || editionResponse.data?.isbn_10?.[0];
+
+    if (!isbn) {
+      throw new Error("Esta edição não possui um ISBN registrado para buscar detalhes.");
+    }
+
+    const response = await openLibraryApi.get("/api/books", {
+      params: { bibkeys: `ISBN:${isbn}`, format: "json", jscmd: "data" },
+    });
+
+    const bookData = response.data[`ISBN:${isbn}`];
+    if (bookData) {
+      return mapRichEditionDataToExternalBookData(bookData, isbn);
+    } else {
+      throw new Error("Não foi possível encontrar detalhes ricos para o ISBN desta edição.");
+    }
   } catch (error) {
     throw HandlerError.handleApiError(error, "Não foi possível buscar os detalhes da edição.");
   }

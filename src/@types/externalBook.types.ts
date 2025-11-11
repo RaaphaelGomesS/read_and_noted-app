@@ -17,6 +17,7 @@ export type ExternalBookSearchResult = {
   isbn?: string;
   img?: string;
   raw: ExternalBookData;
+  editionCount?: number;
 };
 
 export type EditionResult = {

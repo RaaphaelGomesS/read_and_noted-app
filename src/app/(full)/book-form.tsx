@@ -10,7 +10,17 @@ import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/dat
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const statusDisplayMap: Record<BookStatus, string> = {
   aguardando: "Aguardando",
@@ -295,6 +305,7 @@ export default function BookFormScreen() {
           multiline
           style={[styles.textArea, !isTemplateFieldsDisabled && styles.enableInput]}
           editable={!isTemplateFieldsDisabled}
+          maxLength={2000}
         />
         <Input
           placeholder="Categorias (separadas por vírgula)"
@@ -325,22 +336,6 @@ export default function BookFormScreen() {
           <Input placeholder="Páginas lidas" value={readPages} onChangeText={setReadPages} keyboardType="number-pad" />
         )}
 
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowStartDatePicker(true)}>
-            <Text style={styles.datePickerText}>
-              {startedAt ? `Início: ${startedAt.toLocaleDateString()}` : "Data de início"}
-            </Text>
-          </TouchableOpacity>
-
-          {status === "finalizado" && (
-            <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowFinishDatePicker(true)}>
-              <Text style={styles.datePickerText}>
-                {finishedAt ? `Término: ${finishedAt.toLocaleDateString()}` : "Data de término"}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
         {status === "finalizado" && (
           <Input
             placeholder="Avaliação (0.5 - 5)"
@@ -351,6 +346,24 @@ export default function BookFormScreen() {
             maxLength={3}
           />
         )}
+
+        <View style={styles.row}>
+          {(status === "finalizado" || status === "lendo") && (
+            <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowStartDatePicker(true)}>
+              <Text style={styles.datePickerText}>
+                {startedAt ? `Início: ${startedAt.toLocaleDateString()}` : "Data de início"}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {status === "finalizado" && (
+            <TouchableOpacity style={styles.datePickerButton} onPress={() => setShowFinishDatePicker(true)}>
+              <Text style={styles.datePickerText}>
+                {finishedAt ? `Término: ${finishedAt.toLocaleDateString()}` : "Data de término"}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
         <View style={[styles.inputRow, { marginTop: 20 }]}>
           <StyledButton
@@ -433,8 +446,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   ratingInput: {
-    marginTop: 18,
-    marginBottom: -20,
     width: "100%",
     backgroundColor: Colors.card,
     color: Colors.text,

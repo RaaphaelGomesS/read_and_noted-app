@@ -166,6 +166,7 @@ export default function TemplateFormScreen() {
           onChangeText={setDescription}
           multiline
           style={styles.textArea}
+          maxLength={2000}
         />
         <Input placeholder="Categorias (separadas por vírgula)" value={categories} onChangeText={setCategories} />
 
