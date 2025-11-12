@@ -12,6 +12,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -173,7 +175,7 @@ export default function NoteDetailScreen() {
   const markdownStyles = getMarkdownStyles();
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <Stack.Screen
         options={{
           headerRight: () => (
@@ -274,7 +276,7 @@ export default function NoteDetailScreen() {
           handlePropertyChange("type", value as NoteFull["type"]);
         }}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
